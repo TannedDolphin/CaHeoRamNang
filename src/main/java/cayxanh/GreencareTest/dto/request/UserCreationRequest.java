@@ -22,5 +22,6 @@ public class UserCreationRequest {
     String email;
     @NotBlank(message = "full name must not be blank")
     String fullname;
+    String phone;
 
 }
