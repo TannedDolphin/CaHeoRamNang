@@ -1,21 +1,31 @@
 package cayxanh.GreencareTest.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String userid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userid;
     private String username;
     private String password;
     private String email;
     private String fullname;
     private String phone;
-
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "userfeedback", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Feedback> feedbackList;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "userreview",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Review> reviewList;
+    @OneToMany(fetch =FetchType.LAZY,mappedBy = "userorder",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Order> orderList;
+    @OneToOne(mappedBy = "usercart")
+    private Cart cart;
 }

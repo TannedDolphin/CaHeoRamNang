@@ -7,14 +7,14 @@ import lombok.Data;
 @Entity
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reviewid;
     private int reviewrating;
     private String reviewtext;
     @ManyToOne
-    @JoinColumn(name = "productname")
-    private Product product;
+    @JoinColumn(name = "productid",nullable = false,referencedColumnName = "productid")
+    private Product productreview;
     @ManyToOne
-    @JoinColumn(name = "fullname")
-    private User user;
+    @JoinColumn(name = "userid",nullable = false,referencedColumnName = "userid")
+    private User userreview;
 }

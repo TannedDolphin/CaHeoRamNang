@@ -7,11 +7,11 @@ import lombok.Data;
 @Entity
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedbackid;
     private String feedback;
     private String comment;
-    @ManyToOne
-    @JoinColumn(name = "userid")
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
+    private User userfeedback;
 }

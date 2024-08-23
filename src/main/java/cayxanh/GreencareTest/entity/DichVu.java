@@ -7,12 +7,12 @@ import lombok.Data;
 @Entity
 public class DichVu {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dichvuid;
     private String dichvuname;
     private String dichvudescription;
     private double dichvuprice;
     @ManyToOne
-    @JoinColumn(name = "categotyid")
-    private Category category;
+    @JoinColumn(name = "categotyid",nullable = false,referencedColumnName = "categoryid")
+    private Category categoryservice;
 }

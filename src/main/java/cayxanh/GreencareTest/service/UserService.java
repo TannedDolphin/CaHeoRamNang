@@ -3,6 +3,7 @@ package cayxanh.GreencareTest.service;
 import cayxanh.GreencareTest.dto.request.UserCreationRequest;
 import cayxanh.GreencareTest.dto.request.UserUpdateRequest;
 import cayxanh.GreencareTest.dto.response.UserResponse;
+import cayxanh.GreencareTest.entity.Cart;
 import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.exception.AppException;
 import cayxanh.GreencareTest.exception.ErrorCode;
@@ -24,10 +25,12 @@ import java.util.List;
 public class UserService {
     UserRepo userRepo;
     UserMapper userMapper;
+    CartService cartService;
     public User createUser(UserCreationRequest request) {
         if(userRepo.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        cartService.addCart(new Cart());
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -37,13 +40,13 @@ public class UserService {
     public List<User> getUsers() {
         return userRepo.findAll();
     }
-    public UserResponse getUser(String id) {
+    public UserResponse getUser(int id) {
         return userMapper.toUserResponse(userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found")));
     }
-    public void deleteUser(String id) {
+    public void deleteUser(int id) {
         userRepo.deleteById(id);
     }
-    public UserResponse  updateUser(String userId, UserUpdateRequest request) {
+    public UserResponse  updateUser(int userId, UserUpdateRequest request) {
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user,request);
         return userMapper.toUserResponse(userRepo.save(user));
