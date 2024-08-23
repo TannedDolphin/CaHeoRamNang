@@ -2,6 +2,7 @@ package cayxanh.GreencareTest.service;
 
 import cayxanh.GreencareTest.entity.Order;
 import cayxanh.GreencareTest.entity.OrderItem;
+import cayxanh.GreencareTest.entity.Product;
 import cayxanh.GreencareTest.repo.OrderRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,21 +29,27 @@ public class OrderService {
         return order;
     }
     public Order addOrder(Order order) {
-        Order newOrder = orderRepo.save(order);
-        if (newOrder == null) {
-            throw new RuntimeException("Order is empty");
+        double totalprice = 0;
+
+        for (OrderItem orderItem : order.getOrderitems()) {
+            Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
+            totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
         }
-        for(OrderItem orderItem : order.getOrderitems()){
-            OrderItem newOrderitem = orderItemService.createOrderItem(orderItem);
-        }
-        return newOrder;
+        order.setTotalprice(totalprice);
+        return orderRepo.save(order);
     }
     public Order updateOrder(Order order) {
-        Order updatedOrder = orderRepo.findById(order.getOrderid()).orElseThrow(() -> new RuntimeException("Order not found"));
-        updatedOrder.setTotalprice(order.getTotalprice());
-        updatedOrder.setOrderstatus(order.getOrderstatus());
-        Order updateOrder = orderRepo.save(updatedOrder);
-        return updateOrder;
+        Order existingOrder = orderRepo.findById(order.getOrderid())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        double totalprice = 0;
+        for (OrderItem orderItem : order.getOrderitems()) {
+            Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
+            totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
+        }
+        existingOrder.setTotalprice(totalprice);
+        existingOrder.setOrderstatus(order.getOrderstatus());
+        return orderRepo.save(existingOrder);
     }
     public Order deleteOrder(int id) {
         Order order = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));

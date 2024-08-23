@@ -44,4 +44,9 @@ public class CategoryService {
         updateCategory(id).getCategoryname();
         return categoryRepo.save(category);
     }
+    public boolean deleteCategory(int id) {
+        Category category = categoryRepo.findById(id).orElseThrow(()->new RuntimeException("Category not found"));
+        categoryRepo.deleteById(category.getCategoryid());
+        return true;
+    }
 }
