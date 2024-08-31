@@ -1,6 +1,7 @@
 package cayxanh.GreencareTest.service;
 
 import cayxanh.GreencareTest.entity.Cart;
+import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.repo.CartRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,10 @@ public class CartService {
         }
         return carts;
     }
-    public Cart addCart(Cart cart) {
-        Cart newCart = cartRepo.save(cart);
-        if (newCart == null) {
-            throw new RuntimeException("No cart found");
-        }
-        return newCart;
+    public Cart addCart(User user) {
+        Cart cart = new Cart();
+        cart.setUser(user);
+        return cartRepo.save(cart);
     }
     public boolean deleteCart(int id) {
         Cart cart = cartRepo.findById(id).orElseThrow(()->new RuntimeException("No cart found with id " + id));

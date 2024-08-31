@@ -10,8 +10,8 @@ import java.util.List;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userid;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String userid;
     private String username;
     private String password;
     private String email;
@@ -26,6 +26,6 @@ public class User {
     @OneToMany(fetch =FetchType.LAZY,mappedBy = "userorder",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Order> orderList;
-    @OneToOne(mappedBy = "usercart")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
 }

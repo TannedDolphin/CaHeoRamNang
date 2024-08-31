@@ -30,23 +30,23 @@ public class UserService {
         if(userRepo.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        cartService.addCart(new Cart());
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        return userRepo.save(user);
-
+        User savedUser= userRepo.save(user);
+        cartService.addCart(savedUser);
+        return savedUser;
     }
     public List<User> getUsers() {
         return userRepo.findAll();
     }
-    public UserResponse getUser(int id) {
+    public UserResponse getUser(String id) {
         return userMapper.toUserResponse(userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found")));
     }
-    public void deleteUser(int id) {
+    public void deleteUser(String id) {
         userRepo.deleteById(id);
     }
-    public UserResponse  updateUser(int userId, UserUpdateRequest request) {
+    public UserResponse  updateUser(String userId, UserUpdateRequest request) {
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user,request);
         return userMapper.toUserResponse(userRepo.save(user));

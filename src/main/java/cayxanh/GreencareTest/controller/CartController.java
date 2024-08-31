@@ -1,6 +1,7 @@
 package cayxanh.GreencareTest.controller;
 
 import cayxanh.GreencareTest.entity.Cart;
+import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,8 @@ public class CartController {
 
     // Thêm giỏ hàng mới
     @PostMapping
-    public ResponseEntity<Cart> addCart(@RequestBody Cart cart) {
-        Cart newCart = cartService.addCart(cart);
+    public ResponseEntity<Cart> addCart(@RequestBody User user) {
+        Cart newCart = cartService.addCart(user);
         return new ResponseEntity<>(newCart, HttpStatus.CREATED);
     }
 

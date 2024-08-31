@@ -12,9 +12,9 @@ public class  Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cartid;
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "userid",nullable = false,referencedColumnName = "userid")
-    private User usercart;
+    private User user;
     @OneToMany(mappedBy = "cartorderitem",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> orderItems;

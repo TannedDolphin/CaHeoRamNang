@@ -33,15 +33,15 @@ public class UserController {
         return userService.getUsers();
     }
     @GetMapping("/{userId}")
-    UserResponse getUser(@PathVariable int userId) {
+    UserResponse getUser(@PathVariable String userId) {
         return userService.getUser(userId);
     }
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable int userId, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return userService.updateUser(userId, request);
     }
     @DeleteMapping("/{userId}")
-    void deleteUser(@PathVariable int userId) {
+    void deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
     }
 
