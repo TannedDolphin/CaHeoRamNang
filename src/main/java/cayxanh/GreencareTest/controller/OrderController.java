@@ -1,6 +1,6 @@
 package cayxanh.GreencareTest.controller;
 
-import cayxanh.GreencareTest.entity.Order;
+import cayxanh.GreencareTest.entity.Orders;
 import cayxanh.GreencareTest.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,24 +15,24 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> addOrder(@RequestBody Order order) {
-        Order newOrder = orderService.addOrder(order);
-        return ResponseEntity.ok(newOrder);
+    public ResponseEntity<Orders> addOrder(@RequestBody Orders orders) {
+        Orders newOrders = orderService.addOrder(orders);
+        return ResponseEntity.ok(newOrders);
     }
 
     @PutMapping
-    public ResponseEntity<Order> updateOrder(@RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(order);
-        return ResponseEntity.ok(updatedOrder);
+    public ResponseEntity<Orders> updateOrder(@RequestBody Orders orders) {
+        Orders updatedOrders = orderService.updateOrder(orders);
+        return ResponseEntity.ok(updatedOrders);
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
+    public ResponseEntity<List<Orders>> getAllOrders() {
         return ResponseEntity.ok(orderService.getOrders());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable int id) {
+    public ResponseEntity<Orders> getOrderById(@PathVariable int id) {
         return ResponseEntity.ok(orderService.getOrder(id));
     }
 

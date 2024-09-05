@@ -1,10 +1,7 @@
 package cayxanh.GreencareTest.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 @Entity
@@ -14,7 +11,7 @@ public class OrderItem {
     private int orderitemid;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderid", nullable = false,referencedColumnName = "orderid")
-    private Order orders;
+    private Orders orders;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productid",nullable = false,referencedColumnName = "productid")
     private Product orderitemproduct;

@@ -3,6 +3,8 @@ package cayxanh.GreencareTest.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +17,6 @@ public class UserResponse {
     String email;
     String fullname;
     String phone;
+    Set<String> roles;
 
 }

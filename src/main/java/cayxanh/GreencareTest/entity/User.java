@@ -1,22 +1,31 @@
 package cayxanh.GreencareTest.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String userid;
-    private String username;
-    private String password;
-    private String email;
-    private String fullname;
-    private String phone;
+    String userid;
+    String username;
+    String password;
+    String email;
+    String fullname;
+    String phone;
+    @ElementCollection
+    Set<String> roles;
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "userfeedback", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Feedback> feedbackList;
@@ -25,7 +34,8 @@ public class User {
     private List<Review> reviewList;
     @OneToMany(fetch =FetchType.LAZY,mappedBy = "userorder",cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Order> orderList;
+    private List<Orders> ordersList;
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private Cart cart;
 }

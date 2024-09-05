@@ -1,6 +1,6 @@
 package cayxanh.GreencareTest.service;
 
-import cayxanh.GreencareTest.entity.Order;
+import cayxanh.GreencareTest.entity.Orders;
 import cayxanh.GreencareTest.entity.OrderItem;
 import cayxanh.GreencareTest.entity.Product;
 import cayxanh.GreencareTest.repo.OrderRepo;
@@ -17,43 +17,43 @@ import java.util.List;
 public class OrderService {
     OrderRepo orderRepo;
     OrderItemService orderItemService;
-    public List<Order> getOrders() {
-        List<Order> orders = orderRepo.findAll();
+    public List<Orders> getOrders() {
+        List<Orders> orders = orderRepo.findAll();
         if (orders.isEmpty()) {
             throw new RuntimeException("Orders list is empty");
         }
         return orders;
     }
-    public Order getOrder(int id) {
-        Order order = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-        return order;
+    public Orders getOrder(int id) {
+        Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        return orders;
     }
-    public Order addOrder(Order order) {
+    public Orders addOrder(Orders orders) {
         double totalprice = 0;
 
-        for (OrderItem orderItem : order.getOrderitems()) {
+        for (OrderItem orderItem : orders.getOrderitems()) {
             Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
             totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
         }
-        order.setTotalprice(totalprice);
-        return orderRepo.save(order);
+        orders.setTotalprice(totalprice);
+        return orderRepo.save(orders);
     }
-    public Order updateOrder(Order order) {
-        Order existingOrder = orderRepo.findById(order.getOrderid())
+    public Orders updateOrder(Orders orders) {
+        Orders existingOrders = orderRepo.findById(orders.getOrderid())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         double totalprice = 0;
-        for (OrderItem orderItem : order.getOrderitems()) {
+        for (OrderItem orderItem : orders.getOrderitems()) {
             Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
             totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
         }
-        existingOrder.setTotalprice(totalprice);
-        existingOrder.setOrderstatus(order.getOrderstatus());
-        return orderRepo.save(existingOrder);
+        existingOrders.setTotalprice(totalprice);
+        existingOrders.setOrderstatus(orders.getOrderstatus());
+        return orderRepo.save(existingOrders);
     }
-    public Order deleteOrder(int id) {
-        Order order = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-        orderRepo.deleteById(order.getOrderid());
-        return order;
+    public Orders deleteOrder(int id) {
+        Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        orderRepo.deleteById(orders.getOrderid());
+        return orders;
     }
 }
