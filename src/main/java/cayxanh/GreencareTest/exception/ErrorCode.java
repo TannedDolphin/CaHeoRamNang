@@ -2,7 +2,7 @@ package cayxanh.GreencareTest.exception;
 
 public enum ErrorCode {
     USER_EXISTED(1002, "User already existed"),
-    USER_NONEXISTED(1003, "User not existed"),
+    USER_NOT_EXISTED(1003, "User not existed"),
     AUTHENTICATION(1004, "Authentication failed"),
     ;
 

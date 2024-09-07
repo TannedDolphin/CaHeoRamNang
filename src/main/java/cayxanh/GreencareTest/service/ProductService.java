@@ -5,6 +5,7 @@ import cayxanh.GreencareTest.repo.ProductRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ProductService {
         }
         return products;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Product getProduct(int id) {
         Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("product not found"));
         return product;
@@ -30,6 +32,7 @@ public class ProductService {
         Optional<Product> product = productRepo.findByName(name);
         return product.orElse(null); // Trả về null nếu không tìm thấy
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Product createProduct(Product product) {
         Product existProduct = productRepo.findByName(product.getProductname())
                 .orElseThrow(() -> new RuntimeException("product not found"));
@@ -38,6 +41,7 @@ public class ProductService {
         }
         return productRepo.save(product);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Product updateProduct(Product product) {
         Product updatedProduct = productRepo.findById(product.getProductid()).orElseThrow(() -> new RuntimeException("product not found"));
         updatedProduct.setProductname(product.getProductname());
@@ -48,6 +52,7 @@ public class ProductService {
         Product updatedProduct1 = productRepo.save(updatedProduct);
         return updatedProduct1;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteProduct(int id) {
         Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("product not found"));
         productRepo.deleteById(product.getProductid());

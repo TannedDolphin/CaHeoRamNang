@@ -7,6 +7,7 @@ import cayxanh.GreencareTest.repo.OrderRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderService {
     OrderRepo orderRepo;
-    OrderItemService orderItemService;
+
     public List<Orders> getOrders() {
         List<Orders> orders = orderRepo.findAll();
         if (orders.isEmpty()) {
@@ -24,6 +25,7 @@ public class OrderService {
         }
         return orders;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Orders getOrder(int id) {
         Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         return orders;

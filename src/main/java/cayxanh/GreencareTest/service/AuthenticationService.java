@@ -27,7 +27,6 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.Date;
 import java.util.StringJoiner;
 
@@ -40,7 +39,7 @@ public class AuthenticationService {
     @NonFinal
     protected static final String SIGNER_KEY="wjGmEI+WLcPFXBXcWJzYz+jXLBlQiW4ADlGcmVYRgCFpFWn7o6V7UlLns0Z5tTv9";
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var user = userRepo.findByUsername(request.getUsername()).orElseThrow(()->new AppException(ErrorCode.USER_NONEXISTED));
+        var user = userRepo.findByUsername(request.getUsername()).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!authenticated) {
