@@ -30,6 +30,7 @@ public class OrderService {
         Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         return orders;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Orders addOrder(Orders orders) {
         double totalprice = 0;
 
@@ -40,6 +41,7 @@ public class OrderService {
         orders.setTotalprice(totalprice);
         return orderRepo.save(orders);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Orders updateOrder(Orders orders) {
         Orders existingOrders = orderRepo.findById(orders.getOrderid())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -53,6 +55,7 @@ public class OrderService {
         existingOrders.setOrderstatus(orders.getOrderstatus());
         return orderRepo.save(existingOrders);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Orders deleteOrder(int id) {
         Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         orderRepo.deleteById(orders.getOrderid());

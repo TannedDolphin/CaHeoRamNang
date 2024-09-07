@@ -5,6 +5,7 @@ import cayxanh.GreencareTest.repo.DichVuRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DichVuService {
     DichVuRepo dichVuRepo;
+    @PreAuthorize("hasRole('ADMIN')")
     public DichVu getDichVuById(int id) {
         return dichVuRepo.findById(id).orElseThrow(()->new RuntimeException("DichVu id " + id + " not found"));
     }
@@ -29,6 +31,7 @@ public class DichVuService {
         Optional<DichVu> dichVu = dichVuRepo.findByName(name);
         return dichVu.orElse(null); // Trả về null nếu không tìm thấy
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public DichVu createdichvu(DichVu dichVu) {
         DichVu existdichVu = dichVuRepo.findByName(dichVu.getDichvuname())
                 .orElseThrow(() -> new RuntimeException("service not found"));
@@ -37,6 +40,7 @@ public class DichVuService {
         }
         return dichVuRepo.save(dichVu);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public DichVu updateDichvu(int id) {
         DichVu dichVu1= dichVuRepo.findById(id).orElseThrow(()->new RuntimeException("dichvu not found"));
         updateDichvu(id).getDichvuname();
@@ -45,6 +49,7 @@ public class DichVuService {
         updateDichvu(id).getDichvudescription();
         return dichVuRepo.save(dichVu1);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteDichvu(int id) {
         DichVu dichVu2= dichVuRepo.findById(id).orElseThrow(()->new RuntimeException("dichvu not found"));
         dichVuRepo.deleteById(dichVu2.getDichvuid());

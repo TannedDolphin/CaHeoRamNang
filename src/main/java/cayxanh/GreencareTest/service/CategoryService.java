@@ -5,6 +5,7 @@ import cayxanh.GreencareTest.repo.CategoryRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryService {
     CategoryRepo categoryRepo;
+    @PreAuthorize("hasRole('ADMIN')")
     public Category getCategory(int id) {
         Category category= categoryRepo.findById(id)
                 .orElseThrow(()->new RuntimeException("Category not found!!"));
@@ -31,6 +33,7 @@ public class CategoryService {
         Optional<Category> category = categoryRepo.findByName(name);
         return category.orElse(null); // Trả về null nếu không tìm thấy
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Category createcategory(Category category) {
         Category existcategory = categoryRepo.findByName(category.getCategoryname())
                 .orElseThrow(() -> new RuntimeException("category not found"));
@@ -39,11 +42,13 @@ public class CategoryService {
         }
         return categoryRepo.save(category);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Category updateCategory(int id) {
         Category category = categoryRepo.findById(id).orElseThrow(()->new RuntimeException("Category not found"));
         updateCategory(id).getCategoryname();
         return categoryRepo.save(category);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteCategory(int id) {
         Category category = categoryRepo.findById(id).orElseThrow(()->new RuntimeException("Category not found"));
         categoryRepo.deleteById(category.getCategoryid());

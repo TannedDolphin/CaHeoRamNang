@@ -5,6 +5,7 @@ import cayxanh.GreencareTest.repo.FeedbackRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class FeedbackService {
         }
         return feedbacks;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public Feedback getFeedbackById(int id) {
         Feedback feedback = feedbackRepo.findById(id).orElseThrow(() -> new RuntimeException("Feedback not found"));
         return feedback;
