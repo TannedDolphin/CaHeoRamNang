@@ -3,6 +3,7 @@ package cayxanh.GreencareTest.controller;
 import cayxanh.GreencareTest.dto.request.ApiResponse;
 import cayxanh.GreencareTest.dto.request.AuthenticationRequest;
 import cayxanh.GreencareTest.dto.request.IntrospectRequest;
+import cayxanh.GreencareTest.dto.request.LogoutRequest;
 import cayxanh.GreencareTest.dto.response.AuthenticationResponse;
 import cayxanh.GreencareTest.dto.response.IntrospectResponse;
 import cayxanh.GreencareTest.service.AuthenticationService;
@@ -36,6 +37,11 @@ public class AuthenticationController {
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
                 .build();
+    }
+    @PostMapping("/logout")
+    ApiResponse <Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 
 }
