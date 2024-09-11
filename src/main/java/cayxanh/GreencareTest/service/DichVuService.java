@@ -41,14 +41,15 @@ public class DichVuService {
         return dichVuRepo.save(dichVu);
     }
     @PreAuthorize("hasRole('ADMIN')")
-    public DichVu updateDichvu(int id) {
-        DichVu dichVu1= dichVuRepo.findById(id).orElseThrow(()->new RuntimeException("dichvu not found"));
-        updateDichvu(id).getDichvuname();
-        updateDichvu(id).getDichvuname();
-        updateDichvu(id).getDichvuprice();
-        updateDichvu(id).getDichvudescription();
-        return dichVuRepo.save(dichVu1);
+    public DichVu updateDichvu(int id, DichVu updatedDichVu) {
+        DichVu existingDichVu = dichVuRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("DichVu not found"));
+        existingDichVu.setDichvuname(updatedDichVu.getDichvuname());
+        existingDichVu.setDichvuprice(updatedDichVu.getDichvuprice());
+        existingDichVu.setDichvudescription(updatedDichVu.getDichvudescription());
+        return dichVuRepo.save(existingDichVu);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteDichvu(int id) {
         DichVu dichVu2= dichVuRepo.findById(id).orElseThrow(()->new RuntimeException("dichvu not found"));

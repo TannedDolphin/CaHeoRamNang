@@ -50,7 +50,7 @@ public class DichVuController {
     @PutMapping("/{id}")
     public ResponseEntity<DichVu> updateDichVu(@PathVariable int id, @RequestBody DichVu dichVu) {
         dichVu.setDichvuid(id); // Đảm bảo ID từ URL được set vào đối tượng dịch vụ
-        DichVu updatedDichVu = dichVuService.updateDichvu(id);
+        DichVu updatedDichVu = dichVuService.updateDichvu(id, dichVu);
         return new ResponseEntity<>(updatedDichVu, HttpStatus.OK);
     }
 

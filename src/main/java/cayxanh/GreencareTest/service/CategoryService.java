@@ -35,13 +35,13 @@ public class CategoryService {
     }
     @PreAuthorize("hasRole('ADMIN')")
     public Category createcategory(Category category) {
-        Category existcategory = categoryRepo.findByName(category.getCategoryname())
-                .orElseThrow(() -> new RuntimeException("category not found"));
-        if (existcategory != null) {
+        Optional<Category> existcategory = categoryRepo.findByName(category.getCategoryname());
+        if (existcategory.isPresent()) {
             throw new RuntimeException("category already exists");
         }
         return categoryRepo.save(category);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public Category updateCategory(int id) {
         Category category = categoryRepo.findById(id).orElseThrow(()->new RuntimeException("Category not found"));
