@@ -22,6 +22,7 @@ public class CategoryService {
                 .orElseThrow(()->new RuntimeException("Category not found!!"));
         return category;
     }
+
     public List<Category> getAllCategories() {
         List<Category> categories = categoryRepo.findAll();
         if (categories.isEmpty()) {
@@ -29,6 +30,7 @@ public class CategoryService {
         }
         return categories;
     }
+
     public Category findByName(String name) {
         Optional<Category> category = categoryRepo.findByName(name);
         return category.orElse(null); // Trả về null nếu không tìm thấy

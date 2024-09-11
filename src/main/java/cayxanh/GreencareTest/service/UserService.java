@@ -70,7 +70,6 @@ public class UserService {
         userRepo.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse  updateUser(String userId, UserUpdateRequest request) {
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user,request);
