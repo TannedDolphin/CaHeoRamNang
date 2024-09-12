@@ -1,26 +1,28 @@
 package cayxanh.GreencareTest.configuration;
 
-import org.junit.jupiter.api.Assertions;
+import cayxanh.GreencareTest.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+import static org.mockito.Mockito.*;
 
 class SecurityConfigTest {
 
     @Mock
-    HttpSecurity httpSecurity;
+    private CustomJwtDecoder customJwtDecoder;
+
+    @Mock
+    private AuthenticationService authenticationService;
 
     @InjectMocks
-    SecurityConfig securityConfig;
+    private SecurityConfig securityConfig;
 
     @BeforeEach
     void setUp() {
@@ -29,20 +31,18 @@ class SecurityConfigTest {
 
     @Test
     void testFilterChain() throws Exception {
-        SecurityFilterChain filterChain = securityConfig.filterChain(httpSecurity);
-        Assertions.assertNotNull(filterChain);
+        HttpSecurity httpSecurity = mock(HttpSecurity.class);
+        SecurityFilterChain securityFilterChain = securityConfig.filterChain(httpSecurity);
+
+        verify(httpSecurity).authorizeHttpRequests(any());
+        verify(httpSecurity).oauth2ResourceServer(any());
+        verify(httpSecurity).csrf(any());
     }
 
     @Test
     void testJwtAuthenticationConverter() {
-        JwtAuthenticationConverter converter = securityConfig.jwtAuthenticationConverter();
-        assertNotNull(converter);
-    }
-
-    @Test
-    void testJwtDecoder() {
-        JwtDecoder decoder = securityConfig.jwtDecoder();
-        assertNotNull(decoder);
+        JwtAuthenticationConverter jwtAuthenticationConverter = securityConfig.jwtAuthenticationConverter();
+        assertNotNull(jwtAuthenticationConverter);
     }
 
     @Test

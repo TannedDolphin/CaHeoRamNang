@@ -3,8 +3,6 @@ package cayxanh.GreencareTest.configuration;
 import cayxanh.GreencareTest.dto.request.IntrospectRequest;
 import cayxanh.GreencareTest.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,19 +14,28 @@ import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
-    @NonFinal
-    protected static final String SIGNER_KEY="wjGmEI+WLcPFXBXcWJzYz+jXLBlQiW4ADlGcmVYRgCFpFWn7o6V7UlLns0Z5tTv9";
+    private static final String SIGNER_KEY = "wjGmEI+WLcPFXBXcWJzYz+jXLBlQiW4ADlGcmVYRgCFpFWn7o6V7UlLns0Z5tTv9";
 
     @Autowired
     private AuthenticationService authenticationService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
+    private static final Logger logger = Logger.getLogger(CustomJwtDecoder.class.getName());
+
+    public void setNimbusJwtDecoder(NimbusJwtDecoder nimbusJwtDecoder) {
+        this.nimbusJwtDecoder = nimbusJwtDecoder;
+    }
+
     @Override
     public Jwt decode(String token) throws JwtException {
+        if (token == null || token.trim().isEmpty()) {
+            throw new JwtException("Token is null or empty");
+        }
 
         try {
             var response = authenticationService.introspect(
@@ -46,6 +53,12 @@ public class CustomJwtDecoder implements JwtDecoder {
                     .build();
         }
 
-        return nimbusJwtDecoder.decode(token);
+        try {
+            return nimbusJwtDecoder.decode(token);
+        } catch (JwtException e) {
+            logger.severe("Failed to decode JWT: " + e.getMessage());
+            throw e;
+        }
     }
+
 }

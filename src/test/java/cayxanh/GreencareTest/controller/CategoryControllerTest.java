@@ -67,7 +67,7 @@ public class CategoryControllerTest {
         Category category = new Category();
         when(categoryService.createcategory(category)).thenReturn(category);
 
-        ResponseEntity<Category> response = categoryController.createCategory(category);
+        ResponseEntity<Category> response = categoryController.createcategory(category);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(category, response.getBody());
