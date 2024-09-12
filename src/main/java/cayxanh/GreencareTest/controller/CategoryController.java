@@ -41,7 +41,7 @@ public class CategoryController {
 
     // Tạo mới một danh mục
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    public ResponseEntity<Category> createcategory(@RequestBody Category category) {
         Category newCategory = categoryService.createcategory(category);
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
@@ -49,7 +49,7 @@ public class CategoryController {
     // Cập nhật thông tin danh mục
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category category) {
-        category.setCategoryid(id); // Đảm bảo ID từ URL được set vào đối tượng category
+        category.setCategoryid(id);
         Category updatedCategory = categoryService.updateCategory(id);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }

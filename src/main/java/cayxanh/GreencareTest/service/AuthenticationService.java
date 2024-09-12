@@ -2,11 +2,14 @@ package cayxanh.GreencareTest.service;
 
 import cayxanh.GreencareTest.dto.request.AuthenticationRequest;
 import cayxanh.GreencareTest.dto.request.IntrospectRequest;
+import cayxanh.GreencareTest.dto.request.LogoutRequest;
 import cayxanh.GreencareTest.dto.response.AuthenticationResponse;
 import cayxanh.GreencareTest.dto.response.IntrospectResponse;
+import cayxanh.GreencareTest.entity.InvalidatedToken;
 import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.exception.AppException;
 import cayxanh.GreencareTest.exception.ErrorCode;
+import cayxanh.GreencareTest.repo.InvalidatedTokenRepo;
 import cayxanh.GreencareTest.repo.UserRepo;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -28,7 +31,9 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +41,7 @@ import java.util.StringJoiner;
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     UserRepo userRepo;
+    InvalidatedTokenRepo invalidatedTokenRepo;
     @NonFinal
     protected static final String SIGNER_KEY="wjGmEI+WLcPFXBXcWJzYz+jXLBlQiW4ADlGcmVYRgCFpFWn7o6V7UlLns0Z5tTv9";
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -51,6 +57,28 @@ public class AuthenticationService {
                 .authenticated(true)
                 .build();
     }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signToken=verifyToken(request.getToken());
+        String jit =signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime=signToken.getJWTClaimsSet().getExpirationTime();
+        InvalidatedToken invalidatedToken= InvalidatedToken.builder()
+                .tokenid(jit).expiryTime(expiryTime).build();
+        invalidatedTokenRepo.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        JWSVerifier verifier=new MACVerifier(SIGNER_KEY.getBytes());
+        SignedJWT singedJWT= SignedJWT.parse(token);
+        Date expirationTime=singedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified= singedJWT.verify(verifier);
+        if(!(verified && expirationTime.after(new Date())))
+            throw new AppException(ErrorCode.AUTHENTICATION);
+        if(invalidatedTokenRepo.existsById(singedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.AUTHENTICATION);
+        return singedJWT;
+    }
+
     private String generateToken(User user) {
         JWSHeader header=new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet=new JWTClaimsSet.Builder()
@@ -60,6 +88,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()
                 ))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope",buildScope(user))
                 .build();
         Payload payload=new Payload(jwtClaimsSet.toJSONObject());
@@ -74,12 +103,13 @@ public class AuthenticationService {
     }
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token=request.getToken();
-        JWSVerifier verifier=new MACVerifier(SIGNER_KEY.getBytes());
-        SignedJWT singedJWT= SignedJWT.parse(token);
-        Date expirationTime=singedJWT.getJWTClaimsSet().getExpirationTime();
-        var verified= singedJWT.verify(verifier);
-        return IntrospectResponse.builder()
-                .valid(verified && expirationTime.after(new Date()))
+        boolean isValid=true;
+        try {
+            verifyToken(token);
+        }catch (AppException e) {
+            isValid=false;
+        }return IntrospectResponse.builder()
+                .valid(isValid)
                 .build();
     }
     private String buildScope(User user) {
