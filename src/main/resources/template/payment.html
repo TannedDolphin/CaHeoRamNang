@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="">
+        </div>
+
+        <div class="menu">
+            <li><a href="home.html">Trang chủ</a></li>
+            <li><a href="">Giới thiệu</a></li>
+            <li><a href="category.html">Sản phẩm</a>
+                <ul class="submenu">
+                    <li><a href="">Cây công trình</a></li>
+                    <li><a href="">Cây cảnh văn phòng</a></li>
+                    <li><a href="">Cây cảnh trong nhà</a></li>
+                    <li><a href="">Cỏ công trình</a></li>
+                    <li><a href="">Cây phong thủy</a></li>
+                    <li><a href="">Hoa chậu</a></li>
+                    <li><a href="">Cây để bàn</a></li>
+                </ul>
+            </li>
+            <li><a href="">Dịch vụ cây xanh</a>
+                <ul class="submenu">
+                    <li><a href="">Dịch vụ bảo dưỡng cây xanh</a></li>
+                    <li><a href="">Dịch vụ cho thuê cây xanh</a></li>
+                    <li><a href="">Dịch vụ cắt tỉa cây xanh</a></li>
+                    <li><a href="">Dịch vụ trồng cây xanh</a></li>
+                    <li><a href="">Dịch vụ trồng cỏ</a></li>
+                    <li><a href="">Dịch vụ vệ sinh công nghiệp</a></li>
+                    <li><a href="">Dịch vụ cắt cỏ</a></li>
+                    <li><a href="">Dịch vụ chăm sóc Mai sau Tết</a></li>
+                </ul>
+            </li>
+            <li><a href="">Tuyển dụng</a></li>
+            <li><a href="contact.html">Liên hệ</a></li>
+        </div>
+        
+        <div class="others">
+            <li><input type="text" placeholder="Tìm kiếm..."><i class="fa-solid fa-magnifying-glass search-icon"></i></li>
+            <li class="user-menu">
+                <a class="fa-solid fa-user" href=""></a>
+                <ul class="user-submenu">
+                    <li><a href="login.html">Đăng nhập</a></li>
+                    <li><a href="signup.html">Đăng ký</a></li>
+                </ul>
+            </li>
+            <li><a class="fa-solid fa-cart-shopping" href="cart.html"></a></li>
+        </div>
+        
+    </header>
+    <!-- Payment -->
+    <section class="payment">
+      <div class="container">
+          <div class="payment-top-wrap">
+              <div class="payment-top">
+                  <div class="payment-top-cart cart-top-item">
+                      <i class="fa fa-shopping-cart " aria-hidden="true"></i>
+                  </div>
+                  <div class="payment-top-marker cart-top-item">
+                      <i class="fa fa-map-marker " aria-hidden="true"></i>
+                  </div>
+                  <div class="payment-top-card cart-top-item">
+                      <i class="fa fa-credit-card " aria-hidden="true"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="container">
+          <div class="payment-content row">
+              <div class="payment-content-left">
+                  <div class="payment-content-left-method-pay">
+                      <p style="font-weight: bold;">Phương thức giao hàng</p>
+                      <div class="payment-content-left-method-pay-item">
+                          <input name="delivery_method" id="quick_delivery"type="radio">
+                          <label  for="quick_delivery" style="font-size: 14px;">Giao hàng nhanh</label>
+                          <p style="font-size: 12px;">(Giao trong khoảng từ 2-3 ngày)</p>
+                      </div>
+                      <div class="payment-content-left-method-pay-item">
+                        <input name="delivery_method" id="express_delivery" type="radio">
+                        <label  for="express_delivery" style="font-size: 14px;">Giao hỏa tốc</label>
+                        <p style="font-size: 12px;">(Giao trong 3 tiếng)</p>
+                    </div>
+                  </div>
+                  <div class="payment-content-left-method-payment">
+                      <p style="font-weight: bold;">Phương thức thanh toán</p>
+                      <div class="payment-content-left-method-payment-item">
+                          <input type="radio" name="paymentMethod">
+                          <label for="" style="font-size: 14px;">  Thanh toán tiền mặt </label>
+                      </div>
+                      <div class="payment-content-left-method-payment-item">
+                        <input type="radio" name="paymentMethod">
+                        <label for="" style="font-size: 14px;">  Chuyển khoản ngân hàng </label>
+                    </div>
+                      <div class="payment-content-left-method row">
+                          <a href="./pay.html"> &lt;&lt; Quay lại </a>
+                          <button onclick="window.location.href='./home.html'">Hoàn thành</button>
+                      </div>
+                  </div>
+              </div>
+              <div class="payment-content-right">
+                  <div class="payment-content-right-table">
+                      <table>
+                          <tr>
+                              <th>Tên sản phẩm</th>
+                              <th>Giảm giá</th>
+                              <th>Số lượng</th>
+                              <th>Thành tiền</th>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <p>Cây Vạn Niên Tùng</p>
+                              </td>
+                              <td>0%</td>
+                              <td>1</td>
+                              <td><p>5.400.000<sup>đ</sup></p></td>
+                          </tr>
+                          <!-- <tr>
+                            <td>
+                                <p>Xe Đạp Địa Hình MTB JEEP Lighting PS-100 Disc<br>
+
+                                  Phanh Đĩa <br>
+                                    
+                                  Bánh 27.5 Inches / 5.400.000<sup>đ</sup>
+                                </p>
+                            </td>
+                            <td>0%</td>
+                            <td>1</td>
+                            <td><p>5.400.000<sup>đ</sup></p></td>
+                        </tr> -->                  
+                          <tr>
+                              <td colspan="3">Tổng tiền</td>
+                              <td><p>5.400.000<sup>đ</sup></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan="3"> Tạm tính</td>
+                              <td><p>5.400.000<sup>đ</sup></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan="3">Giao hàng nhanh</td>
+                              <td><p>250.000<sup>đ</sup></p></td>
+                          </tr>
+                          <tr>
+                              <td colspan="3">Tiền thanh toán</td>
+                              <td><p>5.650.000<sup>đ</sup></p></td>
+                          </tr>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!-- Footer -->
+     <footer>
+      <div class="footer-top">
+        <li>
+          <a href=""><img src="../static/images/logo-thongbaobocongthuong-300x121.png"></a>
+        </li>
+        <li>
+          <a href="" class="footer-top-menu">Liên hệ</a>
+        </li>
+        <li>
+          <a href="" class="footer-top-menu">Tuyển dụng</a>
+        </li>
+        <li>
+          <a href="" class="footer-top-menu">Giới thiệu</a>
+        </li>
+        <li>
+          <a href="" class="fab fa-facebook-f"></a>
+          <a href="" class="fab fa-twitter"></a>
+          <a href="" class="fab fa-youtube"></a>
+        </li>
+       </div>
+       <div class="footer-bottom">
+        <p>
+          Công Ty Cổ Phần Xe đạp <br>
+         ĐKKD/MST: 0313891315 do sở KH&ĐT TP.HCM cấp 04/07/2016 <br>
+         Trụ sở: 100 Hải Thượng Lãn Ông, P.10, Quận 5, TP.HCM <br>
+         <b>Hotline: 18009473.</b>
+         </p>
+       </div>
+     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
