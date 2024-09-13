@@ -1,65 +1,70 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateProductRequest;
+import cayxanh.GreencareTest.dto.response.MessageResponse;
 import cayxanh.GreencareTest.entity.Product;
 import cayxanh.GreencareTest.service.ProductService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
-@RequiredArgsConstructor
+@RequestMapping("/product")
+@CrossOrigin(origins = "*",maxAge = 3600)
 public class ProductController {
 
-    private final ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    // Lấy danh sách tất cả sản phẩm
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+
+    @GetMapping("/")
+    public ResponseEntity<List<Product>> getList(){
+        List<Product> list = productService.getList();
+
+        return ResponseEntity.ok(list);
     }
 
-    // Lấy sản phẩm theo ID
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<Product>> getListProductByCategory(@PathVariable long id){
+        List<Product> list =  productService.getListProductByCategory(id);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/range")
+    public ResponseEntity<List<Product>> getListProductByPriceRange(@RequestParam("id") long id,@RequestParam("min") int min, @RequestParam("max") int max){
+        List<Product> list = productService.getListByPriceRange(id, min, max);
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) {
+    public ResponseEntity<Product> getProduct(@PathVariable long id){
         Product product = productService.getProduct(id);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+
+        return ResponseEntity.ok(product);
     }
 
-    // Tìm sản phẩm theo tên
-    @GetMapping("/search")
-    public ResponseEntity<Product> getProductByName(@RequestParam String name) {
-        Product product = productService.findByName(name);
-        if (product != null) {
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @PostMapping("/create")
+    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest request){
+        Product product = productService.createProduct(request);
+
+        return ResponseEntity.ok(product);
     }
 
-    // Thêm sản phẩm mới
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product newProduct = productService.createProduct(product);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable long id,@RequestBody CreateProductRequest request){
+        Product product = productService.updateProduct(id, request);
+
+        return ResponseEntity.ok(product);
     }
 
-    // Cập nhật sản phẩm
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product) {
-        product.setProductid(id); // Set ID từ URL vào object product
-        Product updatedProduct = productService.updateProduct(product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-    }
-
-    // Xóa sản phẩm
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable long id){
         productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return ResponseEntity.ok(new MessageResponse("Product is d  elete"));
     }
+
+
 }

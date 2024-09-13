@@ -1,67 +1,61 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateCategoryRequest;
+import cayxanh.GreencareTest.dto.response.MessageResponse;
 import cayxanh.GreencareTest.entity.Category;
 import cayxanh.GreencareTest.service.CategoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
-@RequiredArgsConstructor
+@RequestMapping("/category")
+@CrossOrigin(origins = "*",maxAge = 3600)
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
-    // Lấy danh sách tất cả các danh mục
-    @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<?> getListCategory(){
+        List<Category> categories = categoryService.findAll();
+        return ResponseEntity.ok(categories);
     }
 
-    // Lấy danh mục theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable int id) {
-        Category category = categoryService.getCategory(id);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+    @GetMapping("/enabled")
+    public ResponseEntity<List<Category>> getListEnabled(){
+        List<Category> categories = categoryService.getListEnabled();
+        return ResponseEntity.ok(categories);
     }
 
-    // Tìm danh mục theo tên
-    @GetMapping("/search")
-    public ResponseEntity<Category> findByName(@RequestParam String name) {
-        Category category = categoryService.findByName(name);
-        return category != null ?
-                new ResponseEntity<>(category, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CreateCategoryRequest request){
+        Category category = categoryService.createCategory(request);
+
+        return ResponseEntity.ok(category);
     }
 
-    // Tạo mới một danh mục
-    @PostMapping
-    public ResponseEntity<Category> createcategory(@RequestBody Category category) {
-        Category newCategory = categoryService.createcategory(category);
-        return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable long id, @Valid @RequestBody CreateCategoryRequest request){
+        Category category = categoryService.updateCategory(id, request);
+        return ResponseEntity.ok(category);
     }
 
-    // Cập nhật thông tin danh mục
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category category) {
-        category.setCategoryid(id);
-        Category updatedCategory = categoryService.updateCategory(id);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+    @PutMapping("/enable/{id}")
+    public ResponseEntity<?> enabled(@PathVariable long id){
+        categoryService.enableCategory(id);
+        return ResponseEntity.ok(new MessageResponse("Cập nhật thành công"));
     }
 
-    // Xóa một danh mục
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int id) {
-        boolean isDeleted = categoryService.deleteCategory(id);
-        if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable long id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok(new MessageResponse("Xóa thành công"));
     }
+
+
 }

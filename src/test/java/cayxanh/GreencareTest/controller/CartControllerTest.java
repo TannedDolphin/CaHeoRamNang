@@ -1,8 +1,6 @@
 package cayxanh.GreencareTest.controller;
 
-import cayxanh.GreencareTest.entity.Cart;
 import cayxanh.GreencareTest.entity.User;
-import cayxanh.GreencareTest.service.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

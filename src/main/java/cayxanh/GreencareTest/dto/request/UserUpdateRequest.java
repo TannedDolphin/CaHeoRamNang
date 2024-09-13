@@ -3,6 +3,8 @@ package cayxanh.GreencareTest.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,5 +17,6 @@ public class UserUpdateRequest {
     String email;
     String fullname;
     String phone;
+    List<String> roles;
 
 }

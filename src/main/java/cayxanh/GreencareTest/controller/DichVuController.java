@@ -1,8 +1,11 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateDichVuRequest;
+import cayxanh.GreencareTest.dto.response.MessageResponse;
 import cayxanh.GreencareTest.entity.DichVu;
 import cayxanh.GreencareTest.service.DichVuService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,54 +13,51 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dichvu")
-@RequiredArgsConstructor
+@RequestMapping("/api/blog")
+@CrossOrigin(origins = "*",maxAge = 3600)
 public class DichVuController {
 
-    private final DichVuService dichVuService;
+    @Autowired
+    private DichVuService dichVuService;
 
-    // Lấy danh sách tất cả dịch vụ
-    @GetMapping
-    public ResponseEntity<List<DichVu>> getAllDichVu() {
-        List<DichVu> dichVuList = dichVuService.getAllDichVu();
-        return new ResponseEntity<>(dichVuList, HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<List<DichVu>> getList(){
+        List<DichVu> list = dichVuService.getList();
+
+        return ResponseEntity.ok(list);
+
     }
 
-    // Lấy dịch vụ theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<DichVu> getDichVuById(@PathVariable int id) {
-        DichVu dichVu = dichVuService.getDichVuById(id);
-        return new ResponseEntity<>(dichVu, HttpStatus.OK);
+    public ResponseEntity<DichVu> getDichvu(@PathVariable long id){
+
+        DichVu service =dichVuService.getDichvu(id);
+        return ResponseEntity.ok(service);
+
     }
 
-    // Tìm dịch vụ theo tên
-    @GetMapping("/search")
-    public ResponseEntity<DichVu> findByName(@RequestParam String name) {
-        DichVu dichVu = dichVuService.findByName(name);
-        return dichVu != null ?
-                new ResponseEntity<>(dichVu, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping("/create")
+    public ResponseEntity<DichVu> create(@RequestBody CreateDichVuRequest request){
+
+        DichVu service = dichVuService.createDichvu(request);
+
+        return ResponseEntity.ok(service);
+
     }
 
-    // Tạo mới một dịch vụ
-    @PostMapping
-    public ResponseEntity<DichVu> createDichVu(@RequestBody DichVu dichVu) {
-        DichVu newDichVu = dichVuService.createdichvu(dichVu);
-        return new ResponseEntity<>(newDichVu, HttpStatus.CREATED);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<DichVu> update(@PathVariable long id, @RequestBody CreateDichVuRequest request){
+
+        DichVu service = dichVuService.updateDichvu(id, request);
+
+        return ResponseEntity.ok(service);
+
     }
 
-    // Cập nhật thông tin dịch vụ
-    @PutMapping("/{id}")
-    public ResponseEntity<DichVu> updateDichVu(@PathVariable int id, @RequestBody DichVu dichVu) {
-        dichVu.setDichvuid(id); // Đảm bảo ID từ URL được set vào đối tượng dịch vụ
-        DichVu updatedDichVu = dichVuService.updateDichvu(id, dichVu);
-        return new ResponseEntity<>(updatedDichVu, HttpStatus.OK);
-    }
-
-    // Xóa một dịch vụ
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDichVu(@PathVariable int id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable long id){
         dichVuService.deleteDichvu(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(new MessageResponse("Delete success"));
     }
+
 }

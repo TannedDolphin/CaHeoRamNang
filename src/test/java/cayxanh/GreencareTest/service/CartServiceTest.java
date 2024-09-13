@@ -1,6 +1,5 @@
 package cayxanh.GreencareTest.service;
 
-import cayxanh.GreencareTest.entity.Cart;
 import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.repo.CartRepo;
 import org.junit.jupiter.api.BeforeEach;

@@ -2,30 +2,41 @@ package cayxanh.GreencareTest.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productid;
-    @Column(name = "productname")
-    private String productname;
-    private double productprice;
-    private String productdescription;
-    private int stockquantity;
-    private String productimage;
+    private long id;
+
+    private String name;
+
+
+    @Column(name = "description",columnDefinition = "TEXT")
+    private String description;
+
+    private long price;
+
+    private int quantity;
+
     @ManyToOne
-    @JoinColumn(name = "categoryid",nullable = false,referencedColumnName = "categoryid")
-    private Category categoryproduct;
-    @OneToMany(mappedBy = "productreview",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Review> reviews;
-    @OneToMany(mappedBy = "orderitemproduct")
-    @JsonManagedReference
-    private Set<OrderItem> orderitem;
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "product_image",joinColumns = @JoinColumn(name="product_id"),inverseJoinColumns = @JoinColumn(name="image_id"))
+    private Set<Image> images = new HashSet<>();
+
 }

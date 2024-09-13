@@ -2,21 +2,23 @@ package cayxanh.GreencareTest.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name="category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int categoryid;
-    private String categoryname;
-    @OneToMany(mappedBy = "categoryproduct",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Set<Product> products;
-    @OneToMany(mappedBy = "categoryservice",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Set<DichVu> dichvu;
+    private long id;
+
+    private String name;
+
+    private boolean enable;
 }
