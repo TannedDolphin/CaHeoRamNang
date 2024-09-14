@@ -1,62 +1,94 @@
 package cayxanh.GreencareTest.service;
 
+import cayxanh.GreencareTest.dto.request.CreateProductRequest;
+import cayxanh.GreencareTest.entity.Category;
 import cayxanh.GreencareTest.entity.Product;
+import cayxanh.GreencareTest.repo.CategoryRepo;
 import cayxanh.GreencareTest.repo.ProductRepo;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductService {
-    ProductRepo productRepo;
-    public List<Product> getProducts() {
-        List<Product> products = productRepo.findAll();
-        if (products.isEmpty()) {
-            throw new RuntimeException("empty products list");
+
+    @Autowired
+    private ProductRepo productRepo;
+
+    @Autowired
+    private CategoryRepo categoryRepo;
+
+    // Thêm mới sản phẩm
+    public Product createProduct(CreateProductRequest request) {
+        // Kiểm tra xem category có tồn tại không
+        Optional<Category> categoryOptional = categoryRepo.findById(request.getCategoryid());
+        if (categoryOptional.isEmpty()) {
+            throw new RuntimeException("Category không tồn tại với ID: " + request.getCategoryid());
         }
-        return products;
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Product getProduct(int id) {
-        Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("product not found"));
-        return product;
-    }
-    public Product findByName(String name) {
-        Optional<Product> product = productRepo.findByName(name);
-        return product.orElse(null); // Trả về null nếu không tìm thấy
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Product createProduct(Product product) {
-        Product existProduct = productRepo.findByName(product.getProductname())
-                .orElseThrow(() -> new RuntimeException("product not found"));
-        if (existProduct != null) {
-            throw new RuntimeException("product already exists");
-        }
+
+        // Tạo mới sản phẩm
+        Product product = new Product();
+        product.setProductname(request.getProductname());
+        product.setProductprice(request.getProductprice());
+        product.setProductdescription(request.getProductdescription());
+        product.setStockquantity(request.getStockquantity());
+        product.setProductimage(request.getProductimage());
+        product.setCategoryproduct(categoryOptional.get());
+
         return productRepo.save(product);
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Product updateProduct(Product product) {
-        Product updatedProduct = productRepo.findById(product.getProductid()).orElseThrow(() -> new RuntimeException("product not found"));
-        updatedProduct.setProductname(product.getProductname());
-        updatedProduct.setProductdescription(product.getProductdescription());
-        updatedProduct.setProductprice(product.getProductprice());
-        updatedProduct.setProductimage(product.getProductimage());
-        updatedProduct.setStockquantity(product.getStockquantity());
-        Product updatedProduct1 = productRepo.save(updatedProduct);
-        return updatedProduct1;
+
+    // Sửa sản phẩm theo ID
+    public Product updateProduct(Integer id, CreateProductRequest request) {
+        Optional<Product> productOptional = productRepo.findById(id);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            // Kiểm tra xem category có tồn tại không
+            Optional<Category> categoryOptional = categoryRepo.findById(request.getCategoryid());
+            if (categoryOptional.isEmpty()) {
+                throw new RuntimeException("Category không tồn tại với ID: " + request.getCategoryid());
+            }
+
+            // Cập nhật sản phẩm
+            product.setProductname(request.getProductname());
+            product.setProductprice(request.getProductprice());
+            product.setProductdescription(request.getProductdescription());
+            product.setStockquantity(request.getStockquantity());
+            product.setProductimage(request.getProductimage());
+            product.setCategoryproduct(categoryOptional.get());
+
+            return productRepo.save(product);
+        } else {
+            throw new RuntimeException("Product không tồn tại với ID: " + id);
+        }
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteProduct(int id) {
-        Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("product not found"));
-        productRepo.deleteById(product.getProductid());
-        return true;
+
+    // Xóa sản phẩm theo ID
+    public void deleteProduct(Integer id) {
+        if (productRepo.existsById(id)) {
+            productRepo.deleteById(id);
+        } else {
+            throw new RuntimeException("Product không tồn tại với ID: " + id);
+        }
+    }
+
+    // Lấy danh sách tất cả sản phẩm
+    public List<Product> getAllProducts() {
+        return productRepo.findAll();
+    }
+
+    // Tìm sản phẩm theo ID
+    public Product getProductById(Integer id) {
+        return productRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("Product không tồn tại với ID: " + id));
+    }
+
+    // Tìm sản phẩm theo tên
+    public Product getProductByName(String name) {
+        return productRepo.findByName(name).orElseThrow(() ->
+                new RuntimeException("Product không tồn tại với tên: " + name));
     }
 }
-

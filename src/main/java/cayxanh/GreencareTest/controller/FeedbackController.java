@@ -1,46 +1,48 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateFeedbackRequest;
 import cayxanh.GreencareTest.entity.Feedback;
 import cayxanh.GreencareTest.service.FeedbackService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/feedback")
-@RequiredArgsConstructor
+@RequestMapping("/api/feedbacks")
 public class FeedbackController {
 
-    private final FeedbackService feedbackService;
+    @Autowired
+    private FeedbackService feedbackService;
 
-    // Lấy danh sách tất cả phản hồi
-    @GetMapping
-    public ResponseEntity<List<Feedback>> getAllFeedback() {
-        List<Feedback> feedbacks = feedbackService.getFeedback();
-        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    @PostMapping("/create")
+    public ResponseEntity<Feedback> createFeedback(@RequestBody CreateFeedbackRequest request) {
+        Feedback feedback = feedbackService.createFeedback(request);
+        return ResponseEntity.ok(feedback);
     }
 
-    // Lấy phản hồi theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Feedback> getFeedbackById(@PathVariable int id) {
-        Feedback feedback = feedbackService.getFeedbackById(id);
-        return new ResponseEntity<>(feedback, HttpStatus.OK);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Feedback> updateFeedback(@PathVariable Integer id, @RequestBody CreateFeedbackRequest request) {
+        Feedback feedback = feedbackService.updateFeedback(id, request);
+        return ResponseEntity.ok(feedback);
     }
 
-    // Thêm phản hồi mới
-    @PostMapping
-    public ResponseEntity<Void> addFeedback(@RequestBody Feedback feedback) {
-        feedbackService.addFeedback(feedback);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    // Xóa phản hồi
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFeedback(@PathVariable int id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteFeedback(@PathVariable Integer id) {
         feedbackService.deleteFeedback(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Feedback>> getAllFeedbacks() {
+        List<Feedback> feedbacks = feedbackService.getAllFeedbacks();
+        return ResponseEntity.ok(feedbacks);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Feedback> getFeedbackById(@PathVariable Integer id) {
+        Feedback feedback = feedbackService.getFeedbackById(id);
+        return ResponseEntity.ok(feedback);
     }
 }

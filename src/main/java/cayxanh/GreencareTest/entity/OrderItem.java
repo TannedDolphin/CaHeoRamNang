@@ -1,29 +1,33 @@
 package cayxanh.GreencareTest.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name = "order_detail")
 public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderitemid;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderid", nullable = false,referencedColumnName = "orderid")
-    private Orders orders;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productid",nullable = false,referencedColumnName = "productid")
-    private Product orderitemproduct;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cartid",nullable = false,referencedColumnName = "cartid")
-    private Cart cartorderitem;
+    private long id;
+
+    private String name;
+
+    private long price;
+
     private int quantity;
 
-    public void setProduct(int id) {
-    }
+    private long subTotal;
 
-    public Product getProduct() {
-        return this.orderitemproduct;
-    }
+    @ManyToOne
+    @JoinColumn(name ="orderid")
+    private Orders order;
+    @ManyToOne
+    @JoinColumn(name ="cartid")
+    private Cart cart;
 }

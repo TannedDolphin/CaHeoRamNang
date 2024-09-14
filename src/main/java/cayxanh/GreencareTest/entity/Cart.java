@@ -19,12 +19,4 @@ public class  Cart {
     @OneToMany(mappedBy = "cartorderitem",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> orderItems;
-
-    public void setId(int i) {
-        this.cartid = i;
-    }
-
-    public int getId() {
-        return cartid;
-    }
 }

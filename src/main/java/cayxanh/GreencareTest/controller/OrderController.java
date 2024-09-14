@@ -1,44 +1,53 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateOrderRequest;
 import cayxanh.GreencareTest.entity.Orders;
 import cayxanh.GreencareTest.service.OrderService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
-@RequiredArgsConstructor
+@RequestMapping("/api/orders")
 public class OrderController {
-    private final OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<Orders> addOrder(@RequestBody Orders orders) {
-        Orders newOrders = orderService.addOrder(orders);
-        return ResponseEntity.ok(newOrders);
+    @Autowired
+    private OrderService orderService;
+
+    // Thêm mới đơn hàng
+    @PostMapping("/create")
+    public ResponseEntity<Orders> createOrder(@RequestBody CreateOrderRequest request) {
+        Orders order = orderService.createOrder(request);
+        return ResponseEntity.ok(order);
     }
 
-    @PutMapping
-    public ResponseEntity<Orders> updateOrder(@RequestBody Orders orders) {
-        Orders updatedOrders = orderService.updateOrder(orders);
-        return ResponseEntity.ok(updatedOrders);
+    // Sửa đơn hàng theo ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Orders> updateOrder(@PathVariable Integer id, @RequestBody CreateOrderRequest request) {
+        Orders updatedOrder = orderService.updateOrder(id, request);
+        return ResponseEntity.ok(updatedOrder);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Orders>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getOrders());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Orders> getOrderById(@PathVariable int id) {
-        return ResponseEntity.ok(orderService.getOrder(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable int id) {
+    // Xóa đơn hàng theo ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteOrder(@PathVariable Integer id) {
         orderService.deleteOrder(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Xóa thành công đơn hàng với ID: " + id);
+    }
+
+    // Lấy danh sách tất cả đơn hàng
+    @GetMapping("/all")
+    public ResponseEntity<List<Orders>> getAllOrders() {
+        List<Orders> orders = orderService.getAllOrders();
+        return ResponseEntity.ok(orders);
+    }
+
+    // Tìm đơn hàng theo ID
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Orders> getOrderById(@PathVariable Integer id) {
+        Orders order = orderService.getOrderById(id);
+        return ResponseEntity.ok(order);
     }
 }

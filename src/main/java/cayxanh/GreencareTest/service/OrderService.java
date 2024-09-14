@@ -1,64 +1,108 @@
 package cayxanh.GreencareTest.service;
 
-import cayxanh.GreencareTest.entity.Orders;
+import cayxanh.GreencareTest.dto.request.CreateOrderRequest;
+import cayxanh.GreencareTest.dto.request.CreateOrderItemRequest;
 import cayxanh.GreencareTest.entity.OrderItem;
-import cayxanh.GreencareTest.entity.Product;
+import cayxanh.GreencareTest.entity.Orders;
+import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.repo.OrderRepo;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cayxanh.GreencareTest.repo.OrderItemRepo; // Assuming you have a repo for OrderItem
+import cayxanh.GreencareTest.repo.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderService {
-    OrderRepo orderRepo;
 
-    public List<Orders> getOrders() {
-        List<Orders> orders = orderRepo.findAll();
-        if (orders.isEmpty()) {
-            throw new RuntimeException("Orders list is empty");
-        }
-        return orders;
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Orders getOrder(int id) {
-        Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-        return orders;
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Orders addOrder(Orders orders) {
-        double totalprice = 0;
+    @Autowired
+    private OrderRepo orderRepo;
 
-        for (OrderItem orderItem : orders.getOrderitems()) {
-            Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
-            totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
-        }
-        orders.setTotalprice(totalprice);
-        return orderRepo.save(orders);
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Orders updateOrder(Orders orders) {
-        Orders existingOrders = orderRepo.findById(orders.getOrderid())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+    @Autowired
+    private OrderItemRepo orderItemRepo; // Assuming you have a repo for OrderItem
 
-        double totalprice = 0;
-        for (OrderItem orderItem : orders.getOrderitems()) {
-            Product product = orderItem.getProduct(); // Lấy sản phẩm từ OrderItem
-            totalprice += orderItem.getQuantity() * product.getProductprice(); // Tính tổng tiền
+    @Autowired
+    private UserRepo userRepo;
+
+    // Thêm mới đơn hàng
+    public Orders createOrder(CreateOrderRequest request) {
+        // Kiểm tra xem người dùng có tồn tại không
+        Optional<User> userOptional = userRepo.findById(request.getUserid());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User không tồn tại với ID: " + request.getUserid());
         }
-        existingOrders.setTotalprice(totalprice);
-        existingOrders.setOrderstatus(orders.getOrderstatus());
-        return orderRepo.save(existingOrders);
+
+        // Tạo đơn hàng
+        Orders order = new Orders();
+        order.setTotalprice(request.getTotalprice());
+        order.setOrderstatus(request.getOrderstatus());
+        order.setUserorder(userOptional.get());
+
+        // Lưu các item trong đơn hàng
+        List<OrderItem> orderItems = request.getOrderitems().stream().map(itemRequest -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setName(itemRequest.getName());
+            orderItem.setPrice(itemRequest.getPrice());
+            orderItem.setQuantity(itemRequest.getQuantity());
+            orderItem.setSubTotal(itemRequest.getSubTotal());
+            orderItem.setOrder(order);
+            return orderItem;
+        }).toList();
+
+        order.setOrderitems(orderItems);
+        orderItemRepo.saveAll(orderItems); // Save order items first
+        return orderRepo.save(order);
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Orders deleteOrder(int id) {
-        Orders orders = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-        orderRepo.deleteById(orders.getOrderid());
-        return orders;
+
+    // Sửa đơn hàng theo ID
+    public Orders updateOrder(Integer id, CreateOrderRequest request) {
+        Optional<Orders> orderOptional = orderRepo.findById(id);
+
+        if (orderOptional.isPresent()) {
+            Orders order = orderOptional.get();
+            // Cập nhật thông tin đơn hàng
+            order.setTotalprice(request.getTotalprice());
+            order.setOrderstatus(request.getOrderstatus());
+
+            // Lưu các item mới trong đơn hàng
+            List<OrderItem> orderItems = request.getOrderitems().stream().map(itemRequest -> {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setName(itemRequest.getName());
+                orderItem.setPrice(itemRequest.getPrice());
+                orderItem.setQuantity(itemRequest.getQuantity());
+                orderItem.setSubTotal(itemRequest.getSubTotal());
+                orderItem.setOrder(order);
+                return orderItem;
+            }).toList();
+
+            order.setOrderitems(orderItems);
+            orderItemRepo.saveAll(orderItems); // Save updated order items
+            return orderRepo.save(order);
+        } else {
+            throw new RuntimeException("Order không tồn tại với ID: " + id);
+        }
     }
+
+    // Xóa đơn hàng theo ID
+    public void deleteOrder(Integer id) {
+        if (orderRepo.existsById(id)) {
+            orderRepo.deleteById(id);
+        } else {
+            throw new RuntimeException("Order không tồn tại với ID: " + id);
+        }
+    }
+
+    // Lấy danh sách tất cả đơn hàng
+    public List<Orders> getAllOrders() {
+        return orderRepo.findAll();
+    }
+
+    // Tìm đơn hàng theo ID
+    public Orders getOrderById(Integer id) {
+        return orderRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("Order không tồn tại với ID: " + id));
+    }
+
 }

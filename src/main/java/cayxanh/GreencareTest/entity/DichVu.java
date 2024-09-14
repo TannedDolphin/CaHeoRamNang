@@ -11,7 +11,6 @@ public class DichVu {
     private int dichvuid;
     private String dichvuname;
     private String dichvudescription;
-    private double dichvuprice;
     @ManyToOne
     @JoinColumn(name = "categotyid",nullable = false,referencedColumnName = "categoryid")
     private Category categoryservice;

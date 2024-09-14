@@ -10,7 +10,6 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedbackid;
     private String feedback;
-    private String comment;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     private User userfeedback;

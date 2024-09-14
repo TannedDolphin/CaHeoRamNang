@@ -1,51 +1,48 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateCartRequest;
 import cayxanh.GreencareTest.entity.Cart;
-import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.service.CartService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/carts")
-@RequiredArgsConstructor
+@RequestMapping("/api/carts")
 public class CartController {
 
-    private final CartService cartService;
+    @Autowired
+    private CartService cartService;
 
-    // Lấy tất cả các giỏ hàng
-    @GetMapping
+    @PostMapping("/create")
+    public ResponseEntity<Cart> createCart(@RequestBody CreateCartRequest request) {
+        Cart cart = cartService.createCart(request);
+        return ResponseEntity.ok(cart);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Cart> updateCart(@PathVariable Integer id, @RequestBody CreateCartRequest request) {
+        Cart cart = cartService.updateCart(id, request);
+        return ResponseEntity.ok(cart);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteCart(@PathVariable Integer id) {
+        cartService.deleteCart(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/list")
     public ResponseEntity<List<Cart>> getAllCarts() {
         List<Cart> carts = cartService.getAllCarts();
-        return new ResponseEntity<>(carts, HttpStatus.OK);
+        return ResponseEntity.ok(carts);
     }
 
-    // Lấy giỏ hàng theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable int id) {
-        Cart cart = cartService.getCart(id);
-        return new ResponseEntity<>(cart, HttpStatus.OK);
-    }
-
-    // Thêm giỏ hàng mới
-    @PostMapping
-    public ResponseEntity<Cart> addCart(@RequestBody User user) {
-        Cart newCart = cartService.addCart(user);
-        return new ResponseEntity<>(newCart, HttpStatus.CREATED);
-    }
-
-    // Xóa giỏ hàng theo ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable int id) {
-        boolean isDeleted = cartService.deleteCart(id);
-        if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Cart> getCartById(@PathVariable Integer id) {
+        Cart cart = cartService.getCartById(id);
+        return ResponseEntity.ok(cart);
     }
 }

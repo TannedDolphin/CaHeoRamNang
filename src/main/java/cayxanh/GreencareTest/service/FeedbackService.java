@@ -1,42 +1,63 @@
 package cayxanh.GreencareTest.service;
 
+import cayxanh.GreencareTest.dto.request.CreateFeedbackRequest;
 import cayxanh.GreencareTest.entity.Feedback;
+import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.repo.FeedbackRepo;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cayxanh.GreencareTest.repo.UserRepo; // Giả định bạn có repo cho User
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FeedbackService {
-    FeedbackRepo feedbackRepo;
-    public List<Feedback> getFeedback() {
-        List<Feedback> feedbacks = feedbackRepo.findAll();
-        if (feedbacks.isEmpty()) {
-            throw new RuntimeException("Feedback List is empty");
+
+    @Autowired
+    private FeedbackRepo feedbackRepo;
+
+    @Autowired
+    private UserRepo userRepo; // Giả định bạn có repo cho User
+
+    public Feedback createFeedback(CreateFeedbackRequest request) {
+        Feedback feedback = new Feedback();
+        feedback.setFeedback(request.getFeedback());
+
+        User user = userRepo.findById(request.getUserid())
+                .orElseThrow(() -> new RuntimeException("User không tồn tại với ID: " + request.getUserid()));
+        feedback.setUserfeedback(user);
+
+        return feedbackRepo.save(feedback);
+    }
+
+    public Feedback updateFeedback(Integer id, CreateFeedbackRequest request) {
+        Feedback feedback = feedbackRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Feedback không tồn tại với ID: " + id));
+
+        feedback.setFeedback(request.getFeedback());
+
+        User user = userRepo.findById(request.getUserid())
+                .orElseThrow(() -> new RuntimeException("User không tồn tại với ID: " + request.getUserid()));
+        feedback.setUserfeedback(user);
+
+        return feedbackRepo.save(feedback);
+    }
+
+    public void deleteFeedback(Integer id) {
+        if (!feedbackRepo.existsById(id)) {
+            throw new RuntimeException("Feedback không tồn tại với ID: " + id);
         }
-        return feedbacks;
+        feedbackRepo.deleteById(id);
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public Feedback getFeedbackById(int id) {
-        Feedback feedback = feedbackRepo.findById(id).orElseThrow(() -> new RuntimeException("Feedback not found"));
-        return feedback;
+
+    public List<Feedback> getAllFeedbacks() {
+        return feedbackRepo.findAll();
     }
-    public void addFeedback(Feedback feedback) {
-        Feedback newFeedback = feedbackRepo.save(feedback);
-        if (newFeedback == null) {
-            throw new RuntimeException("Feedback is null");
-        }
+
+    public Feedback getFeedbackById(Integer id) {
+        return feedbackRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Feedback không tồn tại với ID: " + id));
     }
-    public boolean deleteFeedback(int id) {
-        Feedback feedback1= feedbackRepo.findById(id)
-                .orElseThrow(()->new RuntimeException("Feedback not found"));
-        feedbackRepo.deleteById(feedback1.getFeedbackid());
-        return true;
-    }
+
 }

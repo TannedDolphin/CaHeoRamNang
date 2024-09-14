@@ -1,65 +1,60 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateProductRequest;
 import cayxanh.GreencareTest.entity.Product;
 import cayxanh.GreencareTest.service.ProductService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
-@RequiredArgsConstructor
+@RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    // Lấy danh sách tất cả sản phẩm
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    // Thêm mới sản phẩm
+    @PostMapping("/create")
+    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest request) {
+        Product product = productService.createProduct(request);
+        return ResponseEntity.ok(product);
     }
 
-    // Lấy sản phẩm theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) {
-        Product product = productService.getProduct(id);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+    // Sửa sản phẩm theo ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody CreateProductRequest request) {
+        Product updatedProduct = productService.updateProduct(id, request);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    // Xóa sản phẩm theo ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Xóa thành công sản phẩm với ID: " + id);
+    }
+
+    // Lấy danh sách tất cả sản phẩm
+    @GetMapping("/all")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    // Tìm sản phẩm theo ID
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
     }
 
     // Tìm sản phẩm theo tên
-    @GetMapping("/search")
-    public ResponseEntity<Product> getProductByName(@RequestParam String name) {
-        Product product = productService.findByName(name);
-        if (product != null) {
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Thêm sản phẩm mới
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product newProduct = productService.createProduct(product);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
-    }
-
-    // Cập nhật sản phẩm
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product) {
-        product.setProductid(id); // Set ID từ URL vào object product
-        Product updatedProduct = productService.updateProduct(product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-    }
-
-    // Xóa sản phẩm
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
-        productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/findByName/{name}")
+    public ResponseEntity<Product> getProductByName(@PathVariable String name) {
+        Product product = productService.getProductByName(name);
+        return ResponseEntity.ok(product);
     }
 }

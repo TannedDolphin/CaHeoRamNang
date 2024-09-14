@@ -1,67 +1,60 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateCategoryRequest;
 import cayxanh.GreencareTest.entity.Category;
 import cayxanh.GreencareTest.service.CategoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
-@RequiredArgsConstructor
+@RequestMapping("/api/categories")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
-    // Lấy danh sách tất cả các danh mục
-    @GetMapping
+    // Thêm mới category
+    @PostMapping("/create")
+    public ResponseEntity<Category> createCategory(@RequestBody CreateCategoryRequest request) {
+        Category category = categoryService.createCategory(request);
+        return ResponseEntity.ok(category);
+    }
+
+    // Sửa category theo ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Integer id, @RequestBody CreateCategoryRequest request) {
+        Category updatedCategory = categoryService.updateCategory(id, request);
+        return ResponseEntity.ok(updatedCategory);
+    }
+
+    // Xóa category theo ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Xóa thành công danh mục với ID: " + id);
+    }
+
+    // Lấy danh sách tất cả category
+    @GetMapping("/all")
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+        return ResponseEntity.ok(categories);
     }
 
-    // Lấy danh mục theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable int id) {
-        Category category = categoryService.getCategory(id);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+    // Tìm category theo ID
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable Integer id) {
+        Category category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
     }
 
-    // Tìm danh mục theo tên
-    @GetMapping("/search")
-    public ResponseEntity<Category> findByName(@RequestParam String name) {
-        Category category = categoryService.findByName(name);
-        return category != null ?
-                new ResponseEntity<>(category, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    // Tạo mới một danh mục
-    @PostMapping
-    public ResponseEntity<Category> createcategory(@RequestBody Category category) {
-        Category newCategory = categoryService.createcategory(category);
-        return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
-    }
-
-    // Cập nhật thông tin danh mục
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category category) {
-        category.setCategoryid(id);
-        Category updatedCategory = categoryService.updateCategory(id);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
-    }
-
-    // Xóa một danh mục
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int id) {
-        boolean isDeleted = categoryService.deleteCategory(id);
-        if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    // Tìm category theo tên
+    @GetMapping("/findByName/{name}")
+    public ResponseEntity<Category> getCategoryByName(@PathVariable String name) {
+        Category category = categoryService.getCategoryByName(name);
+        return ResponseEntity.ok(category);
     }
 }

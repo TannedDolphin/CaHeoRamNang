@@ -1,54 +1,60 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateReviewRequest;
 import cayxanh.GreencareTest.entity.Review;
 import cayxanh.GreencareTest.service.ReviewService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/reviews")
-@RequiredArgsConstructor
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
-    private final ReviewService reviewService;
+    @Autowired
+    private ReviewService reviewService;
 
-    // Lấy tất cả review
-    @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
-        List<Review> reviews = reviewService.getReviews();
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    // Thêm mới review
+    @PostMapping("/create")
+    public ResponseEntity<Review> createReview(@RequestBody CreateReviewRequest request) {
+        Review review = reviewService.createReview(request);
+        return ResponseEntity.ok(review);
     }
 
-    // Lấy review theo id
-    @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable int id) {
-        Review review = reviewService.getReview(id);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+    // Sửa review theo ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Review> updateReview(@PathVariable Integer id, @RequestBody CreateReviewRequest request) {
+        Review updatedReview = reviewService.updateReview(id, request);
+        return ResponseEntity.ok(updatedReview);
     }
 
-    // Thêm review mới
-    @PostMapping
-    public ResponseEntity<Review> addReview(@RequestBody Review review) {
-        Review newReview = reviewService.addReview(review);
-        return new ResponseEntity<>(newReview, HttpStatus.CREATED);
-    }
-
-    // Cập nhật review
-    @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable int id, @RequestBody Review review) {
-        review.setReviewid(id); // Set ID từ đường dẫn
-        Review updatedReview = reviewService.updateReview(review);
-        return new ResponseEntity<>(updatedReview, HttpStatus.OK);
-    }
-
-    // Xóa review
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable int id) {
+    // Xóa review theo ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteReview(@PathVariable Integer id) {
         reviewService.deleteReview(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok("Xóa thành công review với ID: " + id);
+    }
+
+    // Lấy danh sách tất cả review
+    @GetMapping("/all")
+    public ResponseEntity<List<Review>> getAllReviews() {
+        List<Review> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok(reviews);
+    }
+
+    // Tìm review theo ID
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Review> getReviewById(@PathVariable Integer id) {
+        Review review = reviewService.getReviewById(id);
+        return ResponseEntity.ok(review);
+    }
+
+    // Tìm review theo sản phẩm (productid)
+    @GetMapping("/findByProduct/{productId}")
+    public ResponseEntity<List<Review>> getReviewsByProductId(@PathVariable Integer productId) {
+        List<Review> reviews = reviewService.getReviewsByProductId(productId);
+        return ResponseEntity.ok(reviews);
     }
 }
