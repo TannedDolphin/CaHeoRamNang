@@ -35,7 +35,5 @@ public class User {
     @OneToMany(fetch =FetchType.LAZY,mappedBy = "userorder",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Orders> ordersList;
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private Cart cart;
+
 }

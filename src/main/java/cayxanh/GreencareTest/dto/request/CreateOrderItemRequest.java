@@ -22,6 +22,4 @@ public class CreateOrderItemRequest {
 
     @NotNull(message = "Order ID không được để trống")
     private int orderid;
-    @NotNull(message = "Cart ID không được để trống")
-    private int cartid;
 }

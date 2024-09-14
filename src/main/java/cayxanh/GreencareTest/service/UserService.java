@@ -41,7 +41,6 @@ public class UserService {
         roles.add(Role.USER.name());
         user.setRoles(roles);
         User savedUser= userRepo.save(user);
-        cartService.addCart(savedUser);
         return savedUser;
     }
 

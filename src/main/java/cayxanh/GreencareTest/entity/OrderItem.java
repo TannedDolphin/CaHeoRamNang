@@ -27,7 +27,4 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name ="orderid")
     private Orders order;
-    @ManyToOne
-    @JoinColumn(name ="cartid")
-    private Cart cart;
 }

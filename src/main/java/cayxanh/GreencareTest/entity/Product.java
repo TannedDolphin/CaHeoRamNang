@@ -25,7 +25,4 @@ public class Product {
     @OneToMany(mappedBy = "productreview",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Review> reviews;
-    @OneToMany(mappedBy = "orderitemproduct")
-    @JsonManagedReference
-    private Set<OrderItem> orderitem;
 }

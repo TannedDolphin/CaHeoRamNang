@@ -18,7 +18,7 @@ public class Orders {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid", nullable = false,referencedColumnName = "userid")
     private User userorder;
-    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> orderitems;
 }
