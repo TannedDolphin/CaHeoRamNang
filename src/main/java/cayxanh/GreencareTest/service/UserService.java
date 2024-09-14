@@ -28,7 +28,6 @@ import java.util.List;
 public class UserService {
     UserRepo userRepo;
     UserMapper userMapper;
-    CartService cartService;
     PasswordEncoder passwordEncoder;
 
     public User createUser(UserCreationRequest request) {

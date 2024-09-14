@@ -23,8 +23,6 @@ public class CreateDichVuRequest {
 
     @NotNull(message = "Mô tả rỗng")
     @NotEmpty(message = "Mô tả rỗng")
-    @Size(min=5,max=300,message= "Độ dài mô tả từ 1-300 ký tự")
+    @Size(min=5,max=3000,message= "Độ dài mô tả từ 1-300 ký tự")
     private String dichvudescription;
-
-    private int categoryid;
 }

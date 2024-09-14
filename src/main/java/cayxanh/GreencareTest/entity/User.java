@@ -26,12 +26,9 @@ public class User {
     String phone;
     @ElementCollection
     Set<String> roles;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "userfeedback", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "userfeedback", cascade = CascadeType.ALL)
+    @JsonManagedReference // Điều khiển mối quan hệ chính, sẽ không gây ra vòng lặp
     private List<Feedback> feedbackList;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "userreview",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Review> reviewList;
     @OneToMany(fetch =FetchType.LAZY,mappedBy = "userorder",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Orders> ordersList;

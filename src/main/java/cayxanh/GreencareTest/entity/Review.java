@@ -1,5 +1,7 @@
 package cayxanh.GreencareTest.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,8 +15,6 @@ public class Review {
     private String reviewtext;
     @ManyToOne
     @JoinColumn(name = "productid",nullable = false,referencedColumnName = "productid")
+    @JsonIgnoreProperties({"categoryid","reviews","productname","productprice","stockquantity","image_id","productdescription","product_image","images"})
     private Product productreview;
-    @ManyToOne
-    @JoinColumn(name = "userid",nullable = false,referencedColumnName = "userid")
-    private User userreview;
 }

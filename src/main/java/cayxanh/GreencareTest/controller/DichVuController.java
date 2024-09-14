@@ -45,10 +45,4 @@ public class DichVuController {
         DichVu dichVu = dichVuService.getDichVuById(id);
         return ResponseEntity.ok(dichVu);
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<DichVu>> getDichVuByName(@RequestParam String name) {
-        List<DichVu> dichVus = dichVuService.getDichVuByName(name);
-        return ResponseEntity.ok(dichVus);
-    }
 }

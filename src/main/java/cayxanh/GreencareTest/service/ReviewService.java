@@ -43,7 +43,6 @@ public class ReviewService {
         review.setReviewrating(request.getReviewrating());
         review.setReviewtext(request.getReviewtext());
         review.setProductreview(product.get());
-        review.setUserreview(user.get());
 
         return reviewRepo.save(review);
     }

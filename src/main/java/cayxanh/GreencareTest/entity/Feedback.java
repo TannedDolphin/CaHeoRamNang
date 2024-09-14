@@ -1,5 +1,6 @@
 package cayxanh.GreencareTest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +11,8 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedbackid;
     private String feedback;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @JsonIgnoreProperties({"password", "email", "fullname", "phone", "roles","feedbackList", "reviewList","ordersList"}) // Bỏ qua các trường này
     private User userfeedback;
 }

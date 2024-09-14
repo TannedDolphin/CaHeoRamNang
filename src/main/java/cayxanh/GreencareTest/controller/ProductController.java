@@ -25,14 +25,14 @@ public class ProductController {
 
     // Sửa sản phẩm theo ID
     @PutMapping("/update/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody CreateProductRequest request) {
+    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody CreateProductRequest request) {
         Product updatedProduct = productService.updateProduct(id, request);
         return ResponseEntity.ok(updatedProduct);
     }
 
     // Xóa sản phẩm theo ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Xóa thành công sản phẩm với ID: " + id);
     }
@@ -46,7 +46,7 @@ public class ProductController {
 
     // Tìm sản phẩm theo ID
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+    public ResponseEntity<Product> getProductById(@PathVariable int id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }

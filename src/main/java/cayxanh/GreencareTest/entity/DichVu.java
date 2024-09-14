@@ -1,5 +1,7 @@
 package cayxanh.GreencareTest.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,7 +13,5 @@ public class DichVu {
     private int dichvuid;
     private String dichvuname;
     private String dichvudescription;
-    @ManyToOne
-    @JoinColumn(name = "categotyid",nullable = false,referencedColumnName = "categoryid")
-    private Category categoryservice;
+
 }

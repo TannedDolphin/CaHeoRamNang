@@ -48,13 +48,13 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
-    // Tìm category theo ID
+    // Tìm category theo ID và trả về cùng với danh sách sản phẩm
     public Category getCategoryById(Integer id) {
         return categoryRepo.findById(id).orElseThrow(() ->
                 new RuntimeException("Category không tồn tại với ID: " + id));
     }
 
-    // Tìm category theo tên
+    // Tìm category theo tên và trả về cùng với danh sách sản phẩm
     public Category getCategoryByName(String name) {
         return categoryRepo.findByName(name).orElseThrow(() ->
                 new RuntimeException("Category không tồn tại với tên: " + name));
