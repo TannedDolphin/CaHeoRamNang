@@ -12,16 +12,30 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
-    @Min(value = 0, message = "Tổng giá trị đơn hàng phải lớn hơn hoặc bằng 0")
+    @NotNull(message="Tên khách hàng rỗng")
+    @NotEmpty(message="Tên khách hàng rỗng")
+    @Size(min=3,max=100,message=" Tên khách hàng từ 3-100 ký tự")
+    private String fullname;
+
+    @NotNull(message="địa chỉ rỗng")
+    @NotEmpty(message="địa chỉ rỗng")
+    private String address;
+
+    @NotNull(message = "Email rỗng")
+    @NotEmpty(message = "Email rỗng")
+    @Email(message = "Email không đúng định dạng")
+    private String email;
+
+    @NotNull(message="Số điện thoại rỗng")
+    @NotEmpty(message="Số điện thoại rỗng")
+    private String phone;
+
     private double totalprice;
 
-    @NotBlank(message = "Trạng thái đơn hàng không được để trống")
     private String orderstatus;
 
-    @NotNull(message = "User ID không được để trống")
-    private String userid;
+    private String username;
 
-    @NotNull(message = "Danh sách sản phẩm trong đơn hàng không được để trống")
     private List<CreateOrderItemRequest> orderitems;
 
 }

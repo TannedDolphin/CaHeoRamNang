@@ -6,13 +6,13 @@ import cayxanh.GreencareTest.entity.OrderItem;
 import cayxanh.GreencareTest.entity.Orders;
 import cayxanh.GreencareTest.entity.User;
 import cayxanh.GreencareTest.repo.OrderRepo;
-import cayxanh.GreencareTest.repo.OrderItemRepo; // Assuming you have a repo for OrderItem
+import cayxanh.GreencareTest.repo.OrderItemRepo;
 import cayxanh.GreencareTest.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -21,88 +21,56 @@ public class OrderService {
     private OrderRepo orderRepo;
 
     @Autowired
-    private OrderItemRepo orderItemRepo; // Assuming you have a repo for OrderItem
+    private OrderItemRepo orderItemRepo;
 
     @Autowired
     private UserRepo userRepo;
 
     // Thêm mới đơn hàng
     public Orders createOrder(CreateOrderRequest request) {
-        // Kiểm tra xem người dùng có tồn tại không
-        Optional<User> userOptional = userRepo.findById(request.getUserid());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User không tồn tại với ID: " + request.getUserid());
-        }
 
-        // Tạo đơn hàng
+        // Tìm user theo username
+        User user = userRepo.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Not Found User With Username:" + request.getUsername()));
+
+        // Tạo đơn hàng mới
         Orders order = new Orders();
-        order.setTotalprice(request.getTotalprice());
+        order.setFullname(request.getFullname());
+        order.setAddress(request.getAddress());
+        order.setEmail(request.getEmail());
+        order.setPhone(request.getPhone());
         order.setOrderstatus(request.getOrderstatus());
-        order.setUserorder(userOptional.get());
+        order.setUserorder(user);  // Liên kết user với đơn hàng
 
-        // Lưu các item trong đơn hàng
-        List<OrderItem> orderItems = request.getOrderitems().stream().map(itemRequest -> {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setName(itemRequest.getName());
-            orderItem.setPrice(itemRequest.getPrice());
-            orderItem.setQuantity(itemRequest.getQuantity());
-            orderItem.setSubTotal(itemRequest.getSubTotal());
-            orderItem.setOrder(order);
-            return orderItem;
-        }).toList();
+        // Tạo danh sách các item
+        List<OrderItem> orderItemsList = new ArrayList<>();
+        long totalPrice = 0;
 
-        order.setOrderitems(orderItems);
-        orderItemRepo.saveAll(orderItems); // Save order items first
-        return orderRepo.save(order);
-    }
+        for (CreateOrderItemRequest rq : request.getOrderitems()) {
+            OrderItem orderDetail = new OrderItem();
+            orderDetail.setName(rq.getName());
+            orderDetail.setPrice(rq.getPrice());
+            orderDetail.setQuantity(rq.getQuantity());
+            orderDetail.setSubTotal(rq.getPrice() * rq.getQuantity());
 
-    // Sửa đơn hàng theo ID
-    public Orders updateOrder(Integer id, CreateOrderRequest request) {
-        Optional<Orders> orderOptional = orderRepo.findById(id);
+            // Liên kết OrderItem với Order
+            orderDetail.setOrder(order);
+            orderItemsList.add(orderDetail);  // Thêm vào danh sách OrderItems
 
-        if (orderOptional.isPresent()) {
-            Orders order = orderOptional.get();
-            // Cập nhật thông tin đơn hàng
-            order.setTotalprice(request.getTotalprice());
-            order.setOrderstatus(request.getOrderstatus());
-
-            // Lưu các item mới trong đơn hàng
-            List<OrderItem> orderItems = request.getOrderitems().stream().map(itemRequest -> {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setName(itemRequest.getName());
-                orderItem.setPrice(itemRequest.getPrice());
-                orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setSubTotal(itemRequest.getSubTotal());
-                orderItem.setOrder(order);
-                return orderItem;
-            }).toList();
-
-            order.setOrderitems(orderItems);
-            orderItemRepo.saveAll(orderItems); // Save updated order items
-            return orderRepo.save(order);
-        } else {
-            throw new RuntimeException("Order không tồn tại với ID: " + id);
+            totalPrice += orderDetail.getSubTotal();
         }
-    }
 
-    // Xóa đơn hàng theo ID
-    public void deleteOrder(Integer id) {
-        if (orderRepo.existsById(id)) {
-            orderRepo.deleteById(id);
-        } else {
-            throw new RuntimeException("Order không tồn tại với ID: " + id);
-        }
+        // Lưu đơn hàng trước
+        order.setTotalprice(totalPrice);
+        order.setOrderitems(orderItemsList);  // Liên kết danh sách OrderItems với Order
+
+        // Lưu đơn hàng và các item
+        orderRepo.save(order);
+        return order;
     }
 
     // Lấy danh sách tất cả đơn hàng
     public List<Orders> getAllOrders() {
         return orderRepo.findAll();
     }
-
-    // Tìm đơn hàng theo ID
-    public Orders getOrderById(Integer id) {
-        return orderRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("Order không tồn tại với ID: " + id));
-    }
-
 }

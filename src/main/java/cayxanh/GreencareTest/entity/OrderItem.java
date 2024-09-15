@@ -1,5 +1,6 @@
 package cayxanh.GreencareTest.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,8 @@ public class OrderItem {
 
     private long subTotal;
 
-    @ManyToOne
-    @JoinColumn(name ="orderid")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="orderid",nullable = false)
+    @JsonBackReference
     private Orders order;
 }
