@@ -3,55 +3,55 @@ package cayxanh.GreencareTest.dto.response;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class IntrospectResponseTest {
+public class FeedbackResponseTest {
 
     @Test
     public void testNoArgsConstructor() {
         // Kiểm tra constructor không có tham số
-        IntrospectResponse response = new IntrospectResponse();
-        assertFalse(response.isValid(), "Valid should be false after no-args constructor");
+        FeedbackResponse response = new FeedbackResponse();
+        assertNull(response.getFeedback(), "Feedback should be null after no-args constructor");
     }
 
     @Test
     public void testAllArgsConstructor() {
-        // Kiểm tra constructor với tất cả các tham số
-        IntrospectResponse response = new IntrospectResponse(true);
-        assertTrue(response.isValid(), "Valid should be set via all-args constructor");
+        // Kiểm tra constructor có tham số
+        FeedbackResponse response = new FeedbackResponse("Great service!");
+        assertEquals("Great service!", response.getFeedback(), "Feedback should be set via all-args constructor");
     }
 
     @Test
     public void testSettersAndGetters() {
         // Kiểm tra setter và getter
-        IntrospectResponse response = new IntrospectResponse();
-        response.setValid(false);
+        FeedbackResponse response = new FeedbackResponse();
+        response.setFeedback("Excellent product!");
 
-        assertFalse(response.isValid(), "Valid should be set and retrieved correctly");
+        assertEquals("Excellent product!", response.getFeedback(), "Feedback should be set and retrieved correctly");
     }
 
     @Test
     public void testBuilderPattern() {
         // Kiểm tra builder pattern
-        IntrospectResponse response = IntrospectResponse.builder()
-                .valid(true)
+        FeedbackResponse response = FeedbackResponse.builder()
+                .feedback("Very satisfied!")
                 .build();
 
-        assertTrue(response.isValid(), "Valid should be set via builder");
+        assertEquals("Very satisfied!", response.getFeedback(), "Feedback should be set via builder");
     }
 
     @Test
     public void testToString() {
         // Kiểm tra phương thức toString
-        IntrospectResponse response = new IntrospectResponse(true);
-        String expected = "IntrospectResponse(valid=true)";
+        FeedbackResponse response = new FeedbackResponse("Good experience");
+        String expected = "FeedbackResponse(feedback=Good experience)";
         assertEquals(expected, response.toString(), "toString() should return the correct string representation");
     }
 
     @Test
     public void testEqualsAndHashCode() {
         // Kiểm tra equals và hashCode
-        IntrospectResponse response1 = new IntrospectResponse(true);
-        IntrospectResponse response2 = new IntrospectResponse(true);
-        IntrospectResponse response3 = new IntrospectResponse(false);
+        FeedbackResponse response1 = new FeedbackResponse("Feedback text");
+        FeedbackResponse response2 = new FeedbackResponse("Feedback text");
+        FeedbackResponse response3 = new FeedbackResponse("Different feedback");
 
         assertEquals(response1, response2, "Objects with the same fields should be equal");
         assertNotEquals(response1, response3, "Objects with different fields should not be equal");
@@ -59,4 +59,5 @@ public class IntrospectResponseTest {
         assertEquals(response1.hashCode(), response2.hashCode(), "Hash codes should be the same for equal objects");
         assertNotEquals(response1.hashCode(), response3.hashCode(), "Hash codes should be different for non-equal objects");
     }
+
 }

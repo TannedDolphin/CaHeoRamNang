@@ -3,51 +3,38 @@ package cayxanh.GreencareTest.dto.request;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ApiResponseTest {
+public class ApiResponseTest {
 
     @Test
-    void testApiResponseBuilder() {
-        ApiResponse<String> response = ApiResponse.<String>builder()
-                .code(200)
-                .message("Success")
-                .result("OK")
-                .build();
-
-        assertNotNull(response);
-        assertEquals(200, response.getCode());
-        assertEquals("Success", response.getMessage());
-        assertEquals("OK", response.getResult());
-    }
-
-    @Test
-    void testApiResponseNoArgsConstructor() {
+    public void testApiResponseDefaultValues() {
         ApiResponse<String> response = new ApiResponse<>();
-
-        assertNotNull(response);
-        assertEquals(1000, response.getCode()); // Default value
+        assertEquals(1000, response.getCode());
         assertNull(response.getMessage());
         assertNull(response.getResult());
     }
 
     @Test
-    void testApiResponseAllArgsConstructor() {
-        ApiResponse<String> response = new ApiResponse<>(200, "Success", "OK");
+    public void testApiResponseSettersAndGetters() {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setCode(2000);
+        response.setMessage("Success");
+        response.setResult("Result");
 
-        assertNotNull(response);
-        assertEquals(200, response.getCode());
+        assertEquals(2000, response.getCode());
         assertEquals("Success", response.getMessage());
-        assertEquals("OK", response.getResult());
+        assertEquals("Result", response.getResult());
     }
 
     @Test
-    void testApiResponseSettersAndGetters() {
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setCode(200);
-        response.setMessage("Success");
-        response.setResult("OK");
+    public void testApiResponseBuilder() {
+        ApiResponse<String> response = ApiResponse.<String>builder()
+                .code(2000)
+                .message("Success")
+                .result("Result")
+                .build();
 
-        assertEquals(200, response.getCode());
+        assertEquals(2000, response.getCode());
         assertEquals("Success", response.getMessage());
-        assertEquals("OK", response.getResult());
+        assertEquals("Result", response.getResult());
     }
 }

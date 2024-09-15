@@ -1,13 +1,13 @@
 package cayxanh.GreencareTest.service;
 
+import cayxanh.GreencareTest.dto.request.CreateDichVuRequest;
 import cayxanh.GreencareTest.entity.DichVu;
 import cayxanh.GreencareTest.repo.DichVuRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +16,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class DichVuServiceTest {
 
     @Mock
@@ -25,73 +24,139 @@ public class DichVuServiceTest {
     @InjectMocks
     private DichVuService dichVuService;
 
-    private DichVu dichVu;
-
     @BeforeEach
-    void setUp() {
-        dichVu = new DichVu();
-        dichVu.setDichvuid(1);
-        dichVu.setDichvuname("Test Service");
-        dichVu.setDichvuprice(100);
-        dichVu.setDichvudescription("Test Description");
-
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetDichVuById() {
-        when(dichVuRepo.findById(1)).thenReturn(Optional.of(dichVu));
-        DichVu found = dichVuService.getDichVuById(1);
-        assertEquals(dichVu, found);
+    public void testCreateDichVu() {
+        CreateDichVuRequest request = new CreateDichVuRequest();
+        request.setDichvuname("Cleaning");
+        request.setDichvudescription("Cleaning service");
+
+        DichVu dichVu = new DichVu();
+        dichVu.setDichvuname(request.getDichvuname());
+        dichVu.setDichvudescription(request.getDichvudescription());
+
+        when(dichVuRepo.save(any(DichVu.class))).thenReturn(dichVu);
+
+        DichVu createdDichVu = dichVuService.createDichVu(request);
+
+        assertNotNull(createdDichVu);
+        assertEquals("Cleaning", createdDichVu.getDichvuname());
+        assertEquals("Cleaning service", createdDichVu.getDichvudescription());
     }
 
     @Test
-    void testGetAllDichVu() {
-        List<DichVu> dichVuList = Arrays.asList(dichVu);
-        when(dichVuRepo.findAll()).thenReturn(dichVuList);
-        List<DichVu> foundList = dichVuService.getAllDichVu();
-        assertEquals(dichVuList, foundList);
-    }
+    public void testUpdateDichVu_Success() {
+        Integer dichVuId = 1;
+        CreateDichVuRequest request = new CreateDichVuRequest();
+        request.setDichvuname("Updated Cleaning");
+        request.setDichvudescription("Updated cleaning service");
 
-    @Test
-    void testFindByName() {
-        when(dichVuRepo.findByName("Test Service")).thenReturn(Optional.of(dichVu));
-        DichVu found = dichVuService.findByName("Test Service");
-        assertEquals(dichVu, found);
-    }
+        DichVu existingDichVu = new DichVu();
+        existingDichVu.setDichvuid(dichVuId);
+        existingDichVu.setDichvuname("Cleaning");
+        existingDichVu.setDichvudescription("Cleaning service");
 
-    @Test
-    void testCreateDichVu() {
-        when(dichVuRepo.findByName(dichVu.getDichvuname())).thenReturn(Optional.empty());
-        when(dichVuRepo.save(dichVu)).thenReturn(dichVu);
-        DichVu created = dichVuService.createdichvu(dichVu);
-        assertEquals(dichVu, created);
-    }
-
-    @Test
-    void testUpdateDichVu() {
         DichVu updatedDichVu = new DichVu();
-        updatedDichVu.setDichvuname("New Test Service");
-        updatedDichVu.setDichvuprice(200);
-        updatedDichVu.setDichvudescription("New Test Description");
+        updatedDichVu.setDichvuid(dichVuId);
+        updatedDichVu.setDichvuname(request.getDichvuname());
+        updatedDichVu.setDichvudescription(request.getDichvudescription());
 
-        when(dichVuRepo.findById(1)).thenReturn(Optional.of(dichVu));
+        when(dichVuRepo.findById(dichVuId)).thenReturn(Optional.of(existingDichVu));
         when(dichVuRepo.save(any(DichVu.class))).thenReturn(updatedDichVu);
 
-        DichVu result = dichVuService.updateDichvu(1, updatedDichVu);
-        assertNotNull(result);
-        assertEquals("New Test Service", result.getDichvuname());
-        assertEquals(200, result.getDichvuprice());
-        assertEquals("New Test Description", result.getDichvudescription());
+        DichVu result = dichVuService.updateDichVu(dichVuId, request);
 
-        verify(dichVuRepo, times(1)).findById(1);
-        verify(dichVuRepo, times(1)).save(any(DichVu.class));
+        assertNotNull(result);
+        assertEquals("Updated Cleaning", result.getDichvuname());
+        assertEquals("Updated cleaning service", result.getDichvudescription());
     }
 
     @Test
-    void testDeleteDichVu() {
-        when(dichVuRepo.findById(1)).thenReturn(Optional.of(dichVu));
-        boolean isDeleted = dichVuService.deleteDichvu(1);
-        assertTrue(isDeleted);
-        verify(dichVuRepo, times(1)).deleteById(1);
+    public void testUpdateDichVu_Failure() {
+        Integer dichVuId = 1;
+        CreateDichVuRequest request = new CreateDichVuRequest();
+        request.setDichvuname("Updated Cleaning");
+        request.setDichvudescription("Updated cleaning service");
+
+        when(dichVuRepo.findById(dichVuId)).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            dichVuService.updateDichVu(dichVuId, request);
+        });
+        assertEquals("DichVu không tồn tại với ID: " + dichVuId, thrown.getMessage());
+    }
+
+    @Test
+    public void testDeleteDichVu_Success() {
+        Integer dichVuId = 1;
+
+        when(dichVuRepo.existsById(dichVuId)).thenReturn(true);
+
+        dichVuService.deleteDichVu(dichVuId);
+
+        verify(dichVuRepo, times(1)).deleteById(dichVuId);
+    }
+
+    @Test
+    public void testDeleteDichVu_Failure() {
+        Integer dichVuId = 1;
+
+        when(dichVuRepo.existsById(dichVuId)).thenReturn(false);
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            dichVuService.deleteDichVu(dichVuId);
+        });
+        assertEquals("DichVu không tồn tại với ID: " + dichVuId, thrown.getMessage());
+    }
+
+    @Test
+    public void testGetAllDichVu() {
+        DichVu dichVu1 = new DichVu();
+        dichVu1.setDichvuname("Cleaning");
+
+        DichVu dichVu2 = new DichVu();
+        dichVu2.setDichvuname("Gardening");
+
+        when(dichVuRepo.findAll()).thenReturn(Arrays.asList(dichVu1, dichVu2));
+
+        List<DichVu> dichVus = dichVuService.getAllDichVu();
+
+        assertNotNull(dichVus);
+        assertEquals(2, dichVus.size());
+        assertEquals("Cleaning", dichVus.get(0).getDichvuname());
+        assertEquals("Gardening", dichVus.get(1).getDichvuname());
+    }
+
+    @Test
+    public void testGetDichVuById_Success() {
+        Integer dichVuId = 1;
+
+        DichVu dichVu = new DichVu();
+        dichVu.setDichvuid(dichVuId);
+        dichVu.setDichvuname("Cleaning");
+
+        when(dichVuRepo.findById(dichVuId)).thenReturn(Optional.of(dichVu));
+
+        DichVu result = dichVuService.getDichVuById(dichVuId);
+
+        assertNotNull(result);
+        assertEquals(dichVuId, result.getDichvuid());
+        assertEquals("Cleaning", result.getDichvuname());
+    }
+
+    @Test
+    public void testGetDichVuById_Failure() {
+        Integer dichVuId = 1;
+
+        when(dichVuRepo.findById(dichVuId)).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            dichVuService.getDichVuById(dichVuId);
+        });
+        assertEquals("DichVu không tồn tại với ID: " + dichVuId, thrown.getMessage());
     }
 }

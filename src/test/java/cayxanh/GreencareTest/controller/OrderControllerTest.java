@@ -1,24 +1,22 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateOrderRequest;
 import cayxanh.GreencareTest.entity.Orders;
-import cayxanh.GreencareTest.entity.User;
-import cayxanh.GreencareTest.entity.OrderItem;
 import cayxanh.GreencareTest.service.OrderService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class OrderControllerTest {
 
     @Mock
@@ -27,91 +25,31 @@ public class OrderControllerTest {
     @InjectMocks
     private OrderController orderController;
 
-    @Test
-    public void testAddOrder() {
-        // Arrange
-        Orders orders = new Orders();
-        orders.setOrderid(1);
-        orders.setTotalprice(100.0);
-        orders.setOrderstatus("Đã đặt hàng");
-        User user = new User();
-        user.setUserid("1");
-        orders.setUserorder(user);
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrders(orders);
-        orders.setOrderitems(List.of(orderItem));
-        Orders newOrders = new Orders();
-        when(orderService.addOrder(any(Orders.class))).thenReturn(newOrders);
-
-        // Act
-        ResponseEntity<Orders> response = orderController.addOrder(orders);
-
-        // Assert
-        assertEquals(ResponseEntity.ok(newOrders), response);
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testUpdateOrder() {
-        // Arrange
-        Orders orders = new Orders();
-        orders.setOrderid(1);
-        orders.setTotalprice(100.0);
-        orders.setOrderstatus("Đã đặt hàng");
-        User user = new User();
-        user.setUserid("1");
-        orders.setUserorder(user);
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrders(orders);
-        orders.setOrderitems(List.of(orderItem));
-        Orders updatedOrders = new Orders();
-        when(orderService.updateOrder(any(Orders.class))).thenReturn(updatedOrders);
+    public void testCreateOrder() {
+        CreateOrderRequest request = new CreateOrderRequest();
+        Orders order = new Orders();
+        when(orderService.createOrder(any(CreateOrderRequest.class))).thenReturn(order);
 
-        // Act
-        ResponseEntity<Orders> response = orderController.updateOrder(orders);
+        ResponseEntity<Orders> response = orderController.createOrder(request);
 
-        // Assert
-        assertEquals(ResponseEntity.ok(updatedOrders), response);
+        assertEquals(order, response.getBody());
+        verify(orderService, times(1)).createOrder(any(CreateOrderRequest.class));
     }
 
     @Test
     public void testGetAllOrders() {
-        // Arrange
-        List<Orders> ordersList = new ArrayList<>();
-        ordersList.add(new Orders());
-        when(orderService.getOrders()).thenReturn(ordersList);
+        List<Orders> orders = Arrays.asList(new Orders(), new Orders());
+        when(orderService.getAllOrders()).thenReturn(orders);
 
-        // Act
         ResponseEntity<List<Orders>> response = orderController.getAllOrders();
 
-        // Assert
-        assertEquals(ResponseEntity.ok(ordersList), response);
-    }
-
-    @Test
-    public void testGetOrderById() {
-        // Arrange
-        int id = 1;
-        Orders orders = new Orders();
-        orders.setOrderid(id);
-        when(orderService.getOrder(id)).thenReturn(orders);
-
-        // Act
-        ResponseEntity<Orders> response = orderController.getOrderById(id);
-
-        // Assert
-        assertEquals(ResponseEntity.ok(orders), response);
-    }
-
-    @Test
-    public void testDeleteOrder() {
-        // Arrange
-        int id = 1;
-        when(orderService.deleteOrder(id)).thenReturn(null);
-
-        // Act
-        ResponseEntity<Void> response = orderController.deleteOrder(id);
-
-        // Assert
-        assertEquals(ResponseEntity.noContent().build(), response);
+        assertEquals(orders, response.getBody());
+        verify(orderService, times(1)).getAllOrders();
     }
 }

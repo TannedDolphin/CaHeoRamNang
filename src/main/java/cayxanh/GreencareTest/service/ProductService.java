@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +41,8 @@ public class ProductService {
         product.setCategoryproduct(category);
 
         // Thêm ảnh vào sản phẩm
-        Set<Image> images = request.getImageIds().stream()
+        Set<Long> imageIds = new HashSet<>(request.getImageIds()); // Convert List<Long> to Set<Long>
+        Set<Image> images = imageIds.stream()
                 .map(imageId -> imageRepo.findById(imageId)
                         .orElseThrow(() -> new RuntimeException("Image không tồn tại với ID: " + imageId)))
                 .collect(Collectors.toSet());
@@ -66,7 +68,8 @@ public class ProductService {
         product.setCategoryproduct(category);
 
         // Cập nhật ảnh của sản phẩm
-        Set<Image> images = request.getImageIds().stream()
+        Set<Long> imageIds = new HashSet<>(request.getImageIds()); // Convert List<Long> to Set<Long>
+        Set<Image> images = imageIds.stream()
                 .map(imageId -> imageRepo.findById(imageId)
                         .orElseThrow(() -> new RuntimeException("Image không tồn tại với ID: " + imageId)))
                 .collect(Collectors.toSet());

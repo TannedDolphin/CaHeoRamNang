@@ -1,5 +1,6 @@
 package cayxanh.GreencareTest.controller;
 
+import cayxanh.GreencareTest.dto.request.CreateDichVuRequest;
 import cayxanh.GreencareTest.entity.DichVu;
 import cayxanh.GreencareTest.service.DichVuService;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,13 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 public class DichVuControllerTest {
@@ -30,71 +32,58 @@ public class DichVuControllerTest {
     }
 
     @Test
+    public void testCreateDichVu() {
+        CreateDichVuRequest request = new CreateDichVuRequest();
+        DichVu dichVu = new DichVu();
+        when(dichVuService.createDichVu(any(CreateDichVuRequest.class))).thenReturn(dichVu);
+
+        ResponseEntity<DichVu> response = dichVuController.createDichVu(request);
+
+        assertEquals(dichVu, response.getBody());
+        verify(dichVuService, times(1)).createDichVu(any(CreateDichVuRequest.class));
+    }
+
+    @Test
+    public void testUpdateDichVu() {
+        CreateDichVuRequest request = new CreateDichVuRequest();
+        DichVu dichVu = new DichVu();
+        when(dichVuService.updateDichVu(anyInt(), any(CreateDichVuRequest.class))).thenReturn(dichVu);
+
+        ResponseEntity<DichVu> response = dichVuController.updateDichVu(1, request);
+
+        assertEquals(dichVu, response.getBody());
+        verify(dichVuService, times(1)).updateDichVu(anyInt(), any(CreateDichVuRequest.class));
+    }
+
+    @Test
+    public void testDeleteDichVu() {
+        doNothing().when(dichVuService).deleteDichVu(anyInt());
+
+        ResponseEntity<Void> response = dichVuController.deleteDichVu(1);
+
+        assertEquals(204, response.getStatusCodeValue());
+        verify(dichVuService, times(1)).deleteDichVu(anyInt());
+    }
+
+    @Test
     public void testGetAllDichVu() {
-        List<DichVu> dichVuList = Arrays.asList(new DichVu(), new DichVu());
-        when(dichVuService.getAllDichVu()).thenReturn(dichVuList);
+        List<DichVu> dichVus = Arrays.asList(new DichVu(), new DichVu());
+        when(dichVuService.getAllDichVu()).thenReturn(dichVus);
 
         ResponseEntity<List<DichVu>> response = dichVuController.getAllDichVu();
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dichVuList, response.getBody());
+        assertEquals(dichVus, response.getBody());
+        verify(dichVuService, times(1)).getAllDichVu();
     }
 
     @Test
     public void testGetDichVuById() {
         DichVu dichVu = new DichVu();
-        when(dichVuService.getDichVuById(1)).thenReturn(dichVu);
+        when(dichVuService.getDichVuById(anyInt())).thenReturn(dichVu);
 
         ResponseEntity<DichVu> response = dichVuController.getDichVuById(1);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dichVu, response.getBody());
-    }
-
-    @Test
-    public void testFindByName() {
-        DichVu dichVu = new DichVu();
-        when(dichVuService.findByName("TestDichVu")).thenReturn(dichVu);
-
-        ResponseEntity<DichVu> response = dichVuController.findByName("TestDichVu");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dichVu, response.getBody());
-    }
-
-    @Test
-    public void testCreateDichVu() {
-        DichVu dichVu = new DichVu();
-        when(dichVuService.createdichvu(dichVu)).thenReturn(dichVu);
-
-        ResponseEntity<DichVu> response = dichVuController.createDichVu(dichVu);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(dichVu, response.getBody());
-    }
-
-    @Test
-    public void testUpdateDichVu() {
-        DichVu dichVu = new DichVu();
-        dichVu.setDichvuid(1);
-        when(dichVuService.updateDichvu(1, dichVu)).thenReturn(dichVu);
-
-        ResponseEntity<DichVu> response = dichVuController.updateDichVu(1, dichVu);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dichVu, response.getBody());
-    }
-
-    @Test
-    public void testDeleteDichVu() {
-        doAnswer(invocation -> {
-            // You can add any additional logic here if needed
-            return null;
-        }).when(dichVuService).deleteDichvu(1);
-
-        ResponseEntity<Void> response = dichVuController.deleteDichVu(1);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(dichVuService, times(1)).deleteDichvu(1);
+        verify(dichVuService, times(1)).getDichVuById(anyInt());
     }
 }

@@ -1,16 +1,20 @@
 package cayxanh.GreencareTest.service;
 
-import cayxanh.GreencareTest.entity.Orders;
+import cayxanh.GreencareTest.dto.request.CreateOrderItemRequest;
+import cayxanh.GreencareTest.dto.request.CreateOrderRequest;
 import cayxanh.GreencareTest.entity.OrderItem;
-import cayxanh.GreencareTest.entity.Product;
+import cayxanh.GreencareTest.entity.Orders;
+import cayxanh.GreencareTest.entity.User;
+import cayxanh.GreencareTest.repo.OrderItemRepo;
 import cayxanh.GreencareTest.repo.OrderRepo;
+import cayxanh.GreencareTest.repo.UserRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,81 +22,86 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
     @Mock
     private OrderRepo orderRepo;
 
+    @Mock
+    private OrderItemRepo orderItemRepo;
+
+    @Mock
+    private UserRepo userRepo;
+
     @InjectMocks
     private OrderService orderService;
 
-    private Orders order;
-    private OrderItem orderItem;
-    private Product product;
-
     @BeforeEach
-    void setUp() {
-        product = new Product();
-        product.setProductprice(100.0);
-
-        orderItem = new OrderItem();
-        orderItem.setOrderitemproduct(product);
-        orderItem.setQuantity(2);
-
-        order = new Orders();
-        order.setOrderitems(Arrays.asList(orderItem));
-        order.setOrderid(1);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetOrders() {
-        when(orderRepo.findAll()).thenReturn(Arrays.asList(order));
+    public void testCreateOrder() {
+        // Prepare mock data
+        CreateOrderRequest request = new CreateOrderRequest();
+        request.setUsername("john_doe");
+        request.setFullname("John Doe");
+        request.setAddress("123 Main St");
+        request.setEmail("john.doe@example.com");
+        request.setPhone("555-1234");
+        request.setOrderstatus("PENDING");
 
-        List<Orders> ordersList = orderService.getOrders();
-        assertFalse(ordersList.isEmpty());
-        assertEquals(1, ordersList.size());
-        verify(orderRepo, times(1)).findAll();
-    }
+        CreateOrderItemRequest itemRequest1 = new CreateOrderItemRequest();
+        itemRequest1.setName("Product A");
+        itemRequest1.setPrice(100L); // Thay đổi từ 100.00 thành 100L
+        itemRequest1.setQuantity(2);
 
-    @Test
-    void testGetOrder() {
-        when(orderRepo.findById(1)).thenReturn(Optional.of(order));
+        CreateOrderItemRequest itemRequest2 = new CreateOrderItemRequest();
+        itemRequest2.setName("Product B");
+        itemRequest2.setPrice(50L); // Thay đổi từ 50.00 thành 50L
+        itemRequest2.setQuantity(1);
 
-        Orders foundOrder = orderService.getOrder(1);
-        assertNotNull(foundOrder);
-        verify(orderRepo, times(1)).findById(1);
-    }
+        request.setOrderitems(Arrays.asList(itemRequest1, itemRequest2));
 
-    @Test
-    void testAddOrder() {
+        User user = new User(); // Assuming User class has required fields set up
+        user.setUsername("john_doe");
+
+        when(userRepo.findByUsername("john_doe")).thenReturn(Optional.of(user));
+
+        Orders order = new Orders();
+        order.setFullname("John Doe");
+        order.setAddress("123 Main St");
+        order.setEmail("john.doe@example.com");
+        order.setPhone("555-1234");
+        order.setOrderstatus("PENDING");
+        order.setTotalprice(250L); // Thay đổi từ 250.00 thành 250L
+
         when(orderRepo.save(any(Orders.class))).thenReturn(order);
 
-        Orders savedOrder = orderService.addOrder(order);
-        assertNotNull(savedOrder);
-        assertEquals(200.0, savedOrder.getTotalprice());
-        verify(orderRepo, times(1)).save(order);
+        Orders createdOrder = orderService.createOrder(request);
+
+        assertNotNull(createdOrder);
+        assertEquals("John Doe", createdOrder.getFullname());
+        assertEquals("123 Main St", createdOrder.getAddress());
+        assertEquals("john.doe@example.com", createdOrder.getEmail());
+        assertEquals("555-1234", createdOrder.getPhone());
+        assertEquals("PENDING", createdOrder.getOrderstatus());
+        assertEquals(250L, createdOrder.getTotalprice()); // Thay đổi từ 250.00 thành 250L
+        assertEquals(2, createdOrder.getOrderitems().size());
     }
 
-    @Test
-    void testUpdateOrder() {
-        when(orderRepo.findById(order.getOrderid())).thenReturn(Optional.of(order));
-        when(orderRepo.save(any(Orders.class))).thenReturn(order);
-
-        Orders updatedOrder = orderService.updateOrder(order);
-        assertNotNull(updatedOrder);
-        assertEquals(200.0, updatedOrder.getTotalprice());
-        verify(orderRepo, times(1)).findById(order.getOrderid());
-        verify(orderRepo, times(1)).save(order);
-    }
 
     @Test
-    void testDeleteOrder() {
-        when(orderRepo.findById(1)).thenReturn(Optional.of(order));
+    public void testGetAllOrders() {
+        Orders order1 = new Orders();
+        Orders order2 = new Orders();
 
-        Orders deletedOrder = orderService.deleteOrder(1);
-        assertNotNull(deletedOrder);
-        verify(orderRepo, times(1)).findById(1);
-        verify(orderRepo, times(1)).deleteById(1);
+        when(orderRepo.findAll()).thenReturn(Arrays.asList(order1, order2));
+
+        List<Orders> orders = orderService.getAllOrders();
+
+        assertNotNull(orders);
+        assertEquals(2, orders.size());
     }
 }

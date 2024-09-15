@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CreateCategoryRequest {
 
     @NotNull(message = "Tên danh mục rỗng")
-    @NotEmpty(message = "Tên danh mục rỗng")
+    @NotEmpty(message = "Tên danh mục trống")
     @Size(min=5,max=50,message="Độ dài danh mục từ 5-50 ký tự")
     private String categoryname;
 }
